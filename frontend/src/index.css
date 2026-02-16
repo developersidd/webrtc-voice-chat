@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  /*  colors */
+  --color-primary: #121212;
+  --color-secondary: #1d1d1d;
+  --color-grey: #C4C5C5;
+  --color-blue: #0077ff;
+  --color-indigo: #5453e0;
+  --color-success: #20bd5f;
+  --color-danger: #f44336;
+  --color-pink: #e91e63;
+  --color-hr-color: #323232;
+  --color-input-bg: #262626;
+
+  /*  fonts */
+  --font-nunito: "Nunito Variable", sans-serif;
+}
+
+body {
+  font-family: "Nunito Variable", sans-serif;
+  background-color: var(--color-primary);
+}
