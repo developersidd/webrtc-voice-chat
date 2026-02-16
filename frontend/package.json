@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@fontsource-variable/nunito": "^5.2.7",
+    "@sglara/cn": "^1.0.0",
     "@tailwindcss/vite": "^4.1.18",
     "lucide-react": "^0.564.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-phone-input-2": "^2.15.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.13.0",
     "sonner": "^2.0.7",
