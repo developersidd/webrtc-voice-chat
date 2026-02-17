@@ -4,7 +4,7 @@
   /*  colors */
   --color-primary: #121212;
   --color-secondary: #1d1d1d;
-  --color-grey: #C4C5C5;
+  --color-grey: #c4c5c5;
   --color-blue: #0077ff;
   --color-indigo: #5453e0;
   --color-success: #20bd5f;
@@ -20,4 +20,35 @@
 body {
   font-family: "Nunito Variable", sans-serif;
   background-color: var(--color-primary);
+}
+
+.react-tel-input .country-list .country:hover {
+  background-color: var(--color-primary) !important;
+}
+
+.react-tel-input .country-list .country.highlight {
+  background-color: var(--color-primary) !important;
+}
+
+.react-tel-input .form-control:focus {
+  box-shadow: none;
+}
+
+.react-tel-input .selected-flag.open:before {
+  box-shadow: none !important;
+  border: none;
+  outline: none;
+  border-color: none;
+}
+
+.react-tel-input .selected-flag:focus:before {
+  box-shadow: none !important;
+  border: none;
+  border-color: none;
+}
+
+.react-tel-input .selected-flag:before {
+  box-shadow: none !important;
+  border: none;
+  border-color: none;
 }

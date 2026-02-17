@@ -13,6 +13,8 @@
     "@fontsource-variable/nunito": "^5.2.7",
     "@sglara/cn": "^1.0.0",
     "@tailwindcss/vite": "^4.1.18",
+    "loadash": "^1.0.0",
+    "lodash": "^4.17.23",
     "lucide-react": "^0.564.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

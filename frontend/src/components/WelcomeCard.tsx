@@ -19,7 +19,7 @@ const WelcomeCard = () => {
         </h1>
       </div>
       <div className="text-center">
-        <p className="text-grey md:text-lg text-center mt-6 sm:mt-4 md:leading-8 w-[90%]  md:w-[80%] lg:w-[90%] mx-auto">
+        <p className="text-grey md:text-lg text-center mt-6 md:leading-6.5 w-[90%]  md:w-[80%] lg:w-[90%] mx-auto">
           We’re working hard to get Codershouse ready for everyone! While we
           wrap up the finishing youches, we’re adding people gradually to make
           sure nothing breaks :)
@@ -29,7 +29,7 @@ const WelcomeCard = () => {
           icon={<ArrowRight size={19} />}
           label="Get your username"
           //onClick={() => alert("Waitlist joined!")}
-          className="mt-8 md:mt-10 mx-auto"
+          className="mt-7 md:mt-9 mx-auto"
         />
       </div>
       <div className="mt-4 text-center">
