@@ -1,3 +1,4 @@
+import { isValidPhoneNumber, type CountryCode } from "libphonenumber-js";
 import { Mail, Phone } from "lucide-react";
 import { useState, type JSX } from "react";
 import PhoneInput from "react-phone-input-2";
@@ -19,12 +20,51 @@ const tabs: TabUnion[] = [
 
 const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
   const [tab, setTab] = useState<TabUnion>(tabs[0]);
-  const [phone, setPhone] = useState("");
-  console.log("🚀 ~ phone:", phone);
+  const [isValid, setIsValid] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [phoneData, setPhoneData] = useState({
+    phone: "",
+    info: {
+      countryCode: "",
+      name: "",
+      dialCode: "",
+      format: "",
+    },
+  });
   const [email, setEmail] = useState("");
+
+  // handle tab change
   const changeTab = (tab: TabUnion) => {
     setTab(tab);
+    setIsValid(false);
+    setShowError(false);
   };
+
+  // validate phone number
+  const validePhoneNumber = (phone: string, countryCode: string) => {
+    const isValid = isValidPhoneNumber(
+      phone,
+      countryCode?.toUpperCase() as CountryCode,
+    );
+
+    // check for bd phone number length
+    const isValidLength =
+      countryCode === "bd" ? phone.replace(/\D/g, "").length === 13 : true;
+    setIsValid(isValid && isValidLength);
+  };
+
+  // handle next button click
+  const handleNext = () => {
+    setShowError(true);
+    if (tab.name === "phone") {
+      validePhoneNumber(phoneData.phone, phoneData.info.countryCode);
+    } else {
+      setIsValid(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+    }
+    //if (!isValid) return;
+    onNext();
+  };
+
   return (
     <div className="">
       <Card className="relative pb-32">
@@ -55,17 +95,23 @@ const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
           <div className="mx-auto text-center ">
             {tab.name === "phone" ? (
               <PhoneInput
-                //isValid={(inputNumber, country, countries) => {}}
                 enableSearch
                 country={"bd"}
                 buttonClass="!pl-[10px] !outline-none"
                 searchClass="!bg-secondary mb-2"
                 dropdownClass="!bg-secondary !text-grey"
-                containerClass="mb-4 h-[50px] !w-[90%]  mx-auto"
+                containerClass={`mb- h-[50px] !w-[90%]  mx-auto `}
                 excludeCountries={["il"]}
-                inputClass="h-full !border-0 !bg-secondary !text-grey !rounded-lg"
-                value={phone}
-                onChange={(phone) => setPhone(phone)}
+                inputClass={`h-full !border-0  !bg-secondary !text-grey !rounded-lg ${!isValid && showError ? "!border-1 !border-red-500" : ""} !outline-none`}
+                value={phoneData.phone}
+                onChange={(phone, data) => {
+                  console.log("🚀 ~ data:", data)
+                  validePhoneNumber(phone, data?.countryCode);
+                  setPhoneData({
+                    phone,
+                    info: data,
+                  });
+                }}
                 placeholder="Enter your phone number"
                 //className="bg-secondary text-white rounded-lg px-4 py-2 w-[87.5%] mx-auto block"
               />
@@ -73,16 +119,28 @@ const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setIsValid(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value));
+                }}
                 placeholder="jhondo@example.com"
                 className="bg-secondary text-white rounded-lg px-4 py-2 h-[50px] w-[80%] mx-auto block text-center"
               />
             )}
+            {
+               !isValid &&
+                showError && (
+                  <p className="text-red-500 text-sm mt-2">
+                    Please enter a valid {tab.name === "phone" ? "phone number" : "email address"}.
+                  </p>
+                )
+            }
           </div>
+
           <Button
             className="mt-10 w-32.5 mx-auto"
             label="Next"
-            onClick={onNext}
+            onClick={handleNext}
           />
           <p className="text-grey text-sm mt-5 px-4 text-center">
             By entering your number, you’re agreeing to our Terms of Service and

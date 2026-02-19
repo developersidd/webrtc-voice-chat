@@ -16,11 +16,15 @@ const steps = {
 const Register = () => {
   const [step, setStep] = useState<number>(1);
   const StepComponent = steps[step as keyof typeof steps];
-  const handleNext = () => {
+  const handleNext = (nextStep?: number) => {
     if (step === 5) {
       return;
     }
-    setStep((prev) => prev + 1);
+    if (nextStep) {
+      setStep(nextStep);
+    } else {
+      setStep((prev) => prev + 1);
+    }
   };
   return <StepComponent onNext={handleNext} />;
 };
