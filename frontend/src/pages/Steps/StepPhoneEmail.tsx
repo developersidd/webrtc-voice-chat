@@ -3,6 +3,7 @@ import { Mail, Phone } from "lucide-react";
 import { useState, type JSX } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
+import { useNavigate } from "react-router-dom";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 type StepPhoneEmailProps = {
@@ -19,6 +20,7 @@ const tabs: TabUnion[] = [
 ];
 
 const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
+  const navigate = useNavigate();
   const [tab, setTab] = useState<TabUnion>(tabs[0]);
   const [isValid, setIsValid] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -105,7 +107,7 @@ const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
                 inputClass={`h-full !border-0  !bg-secondary !text-grey !rounded-lg ${!isValid && showError ? "!border-1 !border-red-500" : ""} !outline-none`}
                 value={phoneData.phone}
                 onChange={(phone, data) => {
-                  console.log("🚀 ~ data:", data)
+                  console.log("🚀 ~ data:", data);
                   validePhoneNumber(phone, data?.countryCode);
                   setPhoneData({
                     phone,
@@ -127,14 +129,12 @@ const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
                 className="bg-secondary text-white rounded-lg px-4 py-2 h-[50px] w-[80%] mx-auto block text-center"
               />
             )}
-            {
-               !isValid &&
-                showError && (
-                  <p className="text-red-500 text-sm mt-2">
-                    Please enter a valid {tab.name === "phone" ? "phone number" : "email address"}.
-                  </p>
-                )
-            }
+            {!isValid && showError && (
+              <p className="text-red-500 text-sm mt-2">
+                Please enter a valid{" "}
+                {tab.name === "phone" ? "phone number" : "email address"}.
+              </p>
+            )}
           </div>
 
           <Button

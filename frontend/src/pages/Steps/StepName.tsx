@@ -1,16 +1,69 @@
-import React from 'react'
+import { useState } from "react";
+import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
 
 type StepNameProps = {
-    onNext: () => void;
-}
+  onNext: () => void;
+};
 
 const StepName = ({ onNext }: StepNameProps) => {
-  return (
-    <div className="step-name">
-      <h2>Step Name</h2>
-      <button onClick={onNext}>Next</button>
-    </div>
-  )
-}
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+  const validateName = (name: string) => {
+    if (name.trim() === "") {
+      return "Name is required";
+    } else if (name.trim().length < 6) {
+      return "Name must be at least 6 characters";
+    }
+    return "";
+  };
+  console.log("🚀 ~ error:", error);
 
-export default StepName
+  const handleNext = () => {
+    const error = validateName(name);
+    setError(error);
+    if (error) return;
+    onNext();
+  }; 
+  return (
+    <Card className="relative pb-32">
+      <div className="w-87.5 mx-auto">
+        <div className="flex justify-center items-center gap-4 mb-7 md:mb-9">
+          <img className="size-7.5" src={"/face-emoji.png"} alt={"name"} />
+          <h2 className="text-white  text-lg  md:text-[22px] font-bold">
+            {" "}
+            What's your full name?
+          </h2>
+        </div>
+        <div className="mx-auto text-center ">
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => {
+              const value = e.target.value;
+              setName(value);
+              //if (error) {
+              setError(validateName(value));
+              //}
+            }}
+            placeholder="Your full name"
+            className={`bg-secondary text-white rounded-lg px-4 py-2 h-[40px] w-[90%] mx-auto focus:outline-0 block ${error ? "border border-red-500" : ""}`}
+          />
+
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          <p className="text-grey text-sm mt-6 px-4 text-center w-[200px] mx-auto">
+            People use real names at siddikhouse :)
+          </p>
+        </div>
+
+        <Button
+          className="mt-10 w-32.5 mx-auto"
+          label="Next"
+          onClick={handleNext}
+        />
+      </div>
+    </Card>
+  );
+};
+
+export default StepName;

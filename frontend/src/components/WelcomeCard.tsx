@@ -25,18 +25,18 @@ const WelcomeCard = () => {
           sure nothing breaks :)
         </p>
         <Button
-          href="/login"
+          href="/authenticate"
           icon={<ArrowRight size={19} />}
-          label="Get your username"
+          label="Let's go"
           //onClick={() => alert("Waitlist joined!")}
           className="mt-7 md:mt-9 mx-auto"
         />
       </div>
       <div className="mt-4 text-center">
         <span className="text-blue mr-1">Have an invite text?</span>
-        <Link to="/login" className="text-blue hover:underline">
+        {/*<Link to="/authenticate" className="text-blue hover:underline">
           Sign in
-        </Link>
+        </Link>*/}
       </div>
     </Card>
   );

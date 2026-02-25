@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 
@@ -9,6 +9,7 @@ type StepOtpProps = {
 
 const StepOtp = ({ onNext }: StepOtpProps) => {
   const pathname = useLocation().pathname;
+  const navigate = useNavigate();
   console.log("🚀 ~ pathname:", pathname);
   const isLogin = pathname?.toLowerCase() === "/login";
   const [code, setCode] = useState(["", "", "", ""]);
@@ -24,8 +25,12 @@ const StepOtp = ({ onNext }: StepOtpProps) => {
     const isFilled = code.every((c) => c !== "");
     console.log("🚀 ~ isFilled:", isFilled);
     setError(isFilled ? "" : "please fill the code box!");
-    if (error || !isFilled) return;
-    onNext();
+    //if (error || !isFilled) return;
+    //onNext();
+    return navigate("/activate", {
+      replace: true,
+      //state: { phone: phoneData.phone, email },
+    });
   };
   return (
     <Card className="">
