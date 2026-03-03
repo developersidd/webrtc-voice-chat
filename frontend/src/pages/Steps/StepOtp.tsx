@@ -21,6 +21,30 @@ const StepOtp = ({ onNext }: StepOtpProps) => {
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
   ];
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
+    i: number,
+  ) => {
+    //console.log("🚀 ~ e:", e);
+    const value = e.target.value;
+    if (/^\d$/.test(value)) {
+      const newCode = [...code];
+      newCode[i] = value;
+      setCode(newCode);
+      if (i < inputs.length - 1) {
+        inputs[i + 1]?.current?.focus();
+      }
+      if (newCode.every((c) => c !== "")) {
+        setError("");
+      }
+    } else if (value === "") {
+      const newCode = [...code];
+      newCode[i] = "";
+      setCode(newCode);
+    }
+  };
+
   const handleNext = () => {
     const isFilled = code.every((c) => c !== "");
     console.log("🚀 ~ isFilled:", isFilled);
@@ -55,30 +79,7 @@ const StepOtp = ({ onNext }: StepOtpProps) => {
                 type="text"
                 maxLength={1}
                 value={c}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (/^\d$/.test(value)) {
-                    const newCode = [...code];
-                    newCode[i] = value;
-                    setCode(newCode);
-                    if (i < inputs.length - 1) {
-                      inputs[i + 1]?.current?.focus();
-                    }
-                    if (newCode.every((c) => c !== "")) {
-                      setError("");
-                    }
-                  } else if (value === "") {
-                    const newCode = [...code];
-                    newCode[i] = "";
-                    setCode(newCode);
-                    if (i > 0) {
-                      inputs[i - 1]?.current?.focus();
-                    }
-                    //if (!newCode.every((c) => c !== "")) {
-                    //  setError("Please fill the code box!");
-                    //}
-                  }
-                }}
+                onChange={(e) => handleChange(e, i)}
                 className={`w-12 h-12 text-center text-lg rounded-xl bg-secondary
                   ${
                     error &&
