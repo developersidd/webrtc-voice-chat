@@ -6,43 +6,44 @@ import otpService from "../services/otp.services.js";
 
 class AuthController {
   sendOTP = asyncHandler(async (req, res) => {
-    const { phone = "", email = "" } = req.body || {};
-    const isValidaPhone = /^\d+$/.test(phone);
-    if (phone?.trim() === "") {
-      throw new ApiError(400, "Enter a valid Phone number!");
+    const {  email = "" } = req.body || {};
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const trimedEmail = email?.trim();
+    
+    if (!isValidEmail) {
+      throw new ApiError(400, "Enter a valid Email Address!");
     }
+    
     const otp = otpService.generateOTP();
     const validationDuration = 1000 * 60 * 2; // 2min
     const expires = Date.now() + validationDuration;
-    const data = `${phone}.${otp}.${expires}`;
+    const data = `${trimedEmail}.${otp}.${expires}`;
     const hashed = hashServices.hashOtp(data);
-    //const hashed = `f0be888f1c51db7fa533b252626d6ae35d165ed1ceb1f0f73b4ba
-    //a1c5c658038.${expires}`;
-    //const smsResponse = await otpService.sentOTPBySms(otp, phone);
-    // console.log("🚀 ~ smsResponse:", smsResponse);
+    
+    const emailResponse = await otpService.sentOTPByEmail(otp, trimedEmail);
+    console.log("🚀 ~ emailResponse:", emailResponse)
     const apiRes = new ApiResponse(200, "OTP sent successfully", {
-      phone,
+      email: trimedEmail,
       hash: `${hashed}.${expires}`,
     });
 
-    res.status(apiRes.statusCode).json(apiRes);
+   return res.status(apiRes.statusCode).json(apiRes);
   });
   verifyOtp = asyncHandler(async (req, res) => {
-    const { phone = "", otp = "", hash = "" } = req.body || {};
+    const { email = "", otp = "", hash = "" } = req.body || {};
 
-    if (![phone, otp, hash].every((val) => val?.trim())) {
+    if (![email, otp, hash].every((val) => val?.trim())) {
       throw new ApiError(400, "All fields are required!");
     }
     const [hashedOtp, expires] = hash.split(".");
     if (Date.now() >= +expires) {
       throw new ApiError(400, "OTP expired!");
     }
-    const data = `${phone}.${otp}.${expires}`;
+    const data = `${email}.${otp}.${expires}`;
     const isValid = otpService.verifyOTP(hashedOtp, data);
     if (!isValid) {
-      throw ApiError(400, "OTP is invalid!")
+      throw ApiError(400, "OTP is invalid!");
     }
-    
   });
 }
 
