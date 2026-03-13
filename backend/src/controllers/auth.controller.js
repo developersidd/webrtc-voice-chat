@@ -17,8 +17,9 @@ class AuthController {
     }
 
     const otp = otpService.generateOTP();
-    const validationDuration = 1000 * 60 * 2; // 2min
+    const validationDuration = 1000 * 60 * 60 * 24 * 30; // 2min
     const expires = Date.now() + validationDuration;
+    console.log("🚀 ~ expires:", expires)
     const data = `${trimedEmail}.${otp}.${expires}`;
     const hashed = hashServices.hashOtp(data);
 
@@ -44,7 +45,7 @@ class AuthController {
     const data = `${email}.${otp}.${expires}`;
     const isValid = otpService.verifyOTP(hashedOtp, data);
     if (!isValid) {
-      throw ApiError(400, "OTP is invalid!");
+      throw new ApiError(400, "OTP is invalid!");
     }
 
     // check if user already exist
@@ -56,8 +57,11 @@ class AuthController {
     }
 
     // JWT Token
-    const { accessToken, refreshToken } = await jwtServices.generateTokens();
-    const apiRes = new ApiResponse(200, "OTP Verified successfully", {});
+    const { accessToken, refreshToken } = await jwtServices.generateTokens({
+      _id: user?._id,
+      activated: false
+    });
+    const apiRes = new ApiResponse(200, "OTP Verified successfully", {accessToken});
     return res
       .status(apiRes.statusCode)
       .cookie("refreshToken", refreshToken, {

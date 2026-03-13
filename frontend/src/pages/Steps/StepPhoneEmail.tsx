@@ -4,6 +4,8 @@ import { useState, type JSX } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import api from "../../api";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 type StepPhoneEmailProps = {
@@ -21,8 +23,9 @@ const tabs: TabUnion[] = [
 
 const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
   const navigate = useNavigate();
-  const [tab, setTab] = useState<TabUnion>(tabs[0]);
+  const [tab, setTab] = useState<TabUnion>(tabs[1]);
   const [isValid, setIsValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showError, setShowError] = useState(false);
   const [phoneData, setPhoneData] = useState({
     phone: "",
@@ -56,21 +59,32 @@ const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
   };
 
   // handle next button click
-  const handleNext = () => {
-    setShowError(true);
-    if (tab.name === "phone") {
-      validePhoneNumber(phoneData.phone, phoneData.info.countryCode);
-    } else {
-      setIsValid(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+  const handleNext = async () => {
+    setIsLoading(true);
+
+    if (!isValid) return;
+    //  sent otp to email
+    try {
+      const res = await api.post("/auth/send-otp/", {
+        email, 
+      });
+      console.log("🚀 ~ res:", res);
+      if (res.status === 200) {
+        toast.success("OTP sent successfully!");
+        return onNext();
+      }
+    } catch (error) {
+      console.log("Error sending OTP:", error);
+      return toast.error("Failed to send OTP. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-    //if (!isValid) return;
-    onNext();
   };
 
   return (
     <div className="">
       <Card className="relative pb-32">
-        <div className="absolute -top-16 right-0   flex gap-3">
+        {/*<div className="absolute -top-16 right-0   flex gap-3">
           {tabs.map((t) => (
             <button
               key={t.name}
@@ -80,7 +94,7 @@ const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
               {t.icon}
             </button>
           ))}
-        </div>
+        </div>*/}
         <div className="w-87.5 mx-auto">
           <div className="flex justify-center items-center gap-4 mb-7 md:mb-9">
             <img
@@ -126,7 +140,7 @@ const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
                   setIsValid(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value));
                 }}
                 placeholder="jhondo@example.com"
-                className="bg-secondary text-white rounded-lg px-4 py-2 h-[50px] w-[80%] mx-auto block text-center"
+                className="focus:outline-0 bg-secondary text-white rounded-lg px-4 py-2 h-[50px] w-[80%] mx-auto block text-center"
               />
             )}
             {!isValid && showError && (
@@ -138,10 +152,13 @@ const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
           </div>
 
           <Button
-            className="mt-10 w-32.5 mx-auto"
+            //isLoading={isLoading}
+            disabled={!isValid || isLoading}
+            className="mt-10 w-32.5 mx-auto disabled:opacity-80 disabled:cursor-not-allowed"
             label="Next"
             onClick={handleNext}
           />
+
           <p className="text-grey text-sm mt-5 px-4 text-center">
             By entering your number, you’re agreeing to our Terms of Service and
             Privacy Policy. Thanks!

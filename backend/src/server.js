@@ -1,9 +1,17 @@
-import "./lib/env.js"
+import cors from "cors";
 import express from "express";
+import connectDB from "./db/index.js";
 import ApiError from "./lib/ApiError.js";
+import "./lib/env.js";
 import AuthRouter from "./routes/auth.routes.js";
 
 const app = express();
+app.use(
+  cors({
+    credentials: true,
+    origin: [process.env.CORS_ORIGIN],
+  }),
+);
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -30,7 +38,16 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is listening on http://localhost:${PORT}`);
-});
+connectDB()
+  .then(() => {
+    const PORT = process.env.PORT || 5000;
+    app.on("error", () => {
+      console.log("Application isn't ready to run yes!!");
+    });
+    app.listen(PORT, () => {
+      console.log(`Server is listening on http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log("MONGODB connection failed!!", err);
+  });

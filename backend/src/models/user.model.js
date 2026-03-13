@@ -12,14 +12,14 @@ const UserSchema = new Schema(
 
     username: {
       type: String,
-      required: [true, "Username is required"],
+      //required: [true, "Username is required"],
     },
     bio: {
       type: String,
     },
     avatar: {
       type: String,
-      required: [true, "Avatar is required"],
+      //required: [true, "Avatar is required"],
     },
     activated: {
       type: Boolean,
