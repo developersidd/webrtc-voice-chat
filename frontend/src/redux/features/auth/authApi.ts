@@ -13,11 +13,14 @@ export const authApi = apiSlice.injectEndpoints({
     }),
 
     verifyOTP: builder.mutation({
-      query: (data) => ({
-        url: AUTH("verify-otp"),
-        body: data,
-        method: "POST",
-      }),
+      query: (data) => {
+        console.log("🚀 ~ data:", data);
+        return {
+          url: AUTH("verify-otp"),
+          body: data,
+          method: "POST",
+        };
+      },
     }),
   }),
 });

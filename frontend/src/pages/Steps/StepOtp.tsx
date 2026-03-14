@@ -48,7 +48,7 @@ const StepOtp = () => {
     if (!isFilled || !otp.email || !otp.hash) {
       return toast.error("Please enter the complete OTP.");
     }
-    console.log("he");
+    //console.log("he");
     try {
       const res = await verifyOtp({
         otp: code.join(""),
