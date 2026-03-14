@@ -1,9 +1,12 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAppSelector } from "../redux/app/hooks";
+import { authSelector } from "../redux/features/auth/authSelector";
 
 const GuestRoute = () => {
-  const user = null;
+  const { user } = useAppSelector(authSelector);
+
   const location = useLocation();
-  if (user) {
+  if (user._id) {
     return <Navigate to={"/room"} state={{ from: location }} replace />;
   }
   return <Outlet />;

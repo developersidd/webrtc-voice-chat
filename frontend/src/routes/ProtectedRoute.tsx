@@ -1,12 +1,12 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAppSelector } from "../redux/app/hooks";
+import { authSelector } from "../redux/features/auth/authSelector";
 
 const ProtectedRoute = () => {
-  const isAuthenticated = false;
-  const user = {
-    activated: false,
-  };
+  const { user, isAuthenticated } = useAppSelector(authSelector);
+
   const location = useLocation();
-  if (isAuthenticated && !user?.activated) {
+  if (isAuthenticated && !user.activated) {
     return <Navigate to={"/activate"} state={{ from: location }} replace />;
   }
   return !isAuthenticated ? (

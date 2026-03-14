@@ -8,11 +8,8 @@ import { useVerifyOTPMutation } from "../../redux/features/auth/authApi";
 import { authSelector } from "../../redux/features/auth/authSelector";
 import { setAuth } from "../../redux/features/auth/authSlice";
 
-type StepOtpProps = {
-  onNext: () => void;
-};
 
-const StepOtp = ({ onNext }: StepOtpProps) => {
+const StepOtp = () => {
   const pathname = useLocation().pathname;
   const [verifyOtp, { isLoading }] = useVerifyOTPMutation();
   const dispatch = useAppDispatch();
@@ -48,10 +45,10 @@ const StepOtp = ({ onNext }: StepOtpProps) => {
 
   const isFilled = code.every((c) => c !== "");
   const handleNext = async () => {
-    if (!isFilled || !otp.email || !otp.hash){
+    if (!isFilled || !otp.email || !otp.hash) {
       return toast.error("Please enter the complete OTP.");
-    };
-    console.log("he")
+    }
+    console.log("he");
     try {
       const res = await verifyOtp({
         otp: code.join(""),
@@ -64,18 +61,20 @@ const StepOtp = ({ onNext }: StepOtpProps) => {
         dispatch(setAuth(user));
         toast.success("OTP verified successfully!");
 
-        if (user?.activated) {
-          navigate("/rooms", {
-            replace: true,
-          });
-        }
-        return navigate("/activate", {
-          replace: true,
-          state: { email: user?.email },
-        });
+        //if (user?.activated) {
+        //  navigate("/rooms", {
+        //    replace: true,
+        //  });
+        //}
+        //return navigate("/activate", {
+        //  replace: true,
+        //  state: { email: user?.email },
+        //});
       }
     } catch (error) {
-      toast.error( error?.data?.message || "Failed to verify OTP. Please try again.");
+      toast.error(
+        error?.data?.message || "Failed to verify OTP. Please try again.",
+      );
       console.error("Error verifying OTP:", error);
     }
   };

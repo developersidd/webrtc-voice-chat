@@ -1,14 +1,15 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAppSelector } from "../redux/app/hooks";
+import { authSelector } from "../redux/features/auth/authSelector";
 
 const SemiProtectedRoute = () => {
-  const user = {
-    activated: false,
-  };
+  const { user, isAuthenticated } = useAppSelector(authSelector);
+
   const location = useLocation();
-  if (!user) {
+  if (!isAuthenticated) {
     return <Navigate to={"/"} state={{ from: location }} replace />;
   }
-  return user && !user?.activated ? (
+  return user._id && !user.activated ? (
     <Outlet />
   ) : (
     <Navigate to={"/rooms"} state={{ from: location }} replace />

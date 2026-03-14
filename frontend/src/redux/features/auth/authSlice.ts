@@ -7,7 +7,7 @@ const initialState = {
     refreshToken: "",
     activated: false,
     createdAt: "",
-    updatedAt: "",
+    _id: ""
   },
   otp: {
     email: "siddik.prgmr@gmail.com",
@@ -21,7 +21,7 @@ const authSlice = createSlice({
   reducers: {
     setAuth: (state, action) => {
       state.user = action.payload;
-      state.isAuthenticated = action.payload?.activated;
+      state.isAuthenticated = true
 
     },
     setOtp: (state, action) => {
