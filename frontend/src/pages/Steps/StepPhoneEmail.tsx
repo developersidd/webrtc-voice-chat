@@ -5,9 +5,10 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import api from "../../api";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
+import { useSendOTPMutation } from "../../redux/features/auth/authApi";
+
 type StepPhoneEmailProps = {
   onNext: () => void;
 };
@@ -23,9 +24,9 @@ const tabs: TabUnion[] = [
 
 const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
   const navigate = useNavigate();
+  const [sendOTP, { isLoading }] = useSendOTPMutation();
   const [tab, setTab] = useState<TabUnion>(tabs[1]);
   const [isValid, setIsValid] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [showError, setShowError] = useState(false);
   const [phoneData, setPhoneData] = useState({
     phone: "",
@@ -60,24 +61,20 @@ const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
 
   // handle next button click
   const handleNext = async () => {
-    setIsLoading(true);
-
     if (!isValid) return;
     //  sent otp to email
     try {
-      const res = await api.post("/auth/send-otp/", {
-        email, 
-      });
+      const res = await sendOTP({
+        email,
+      }).unwrap(); 
       console.log("🚀 ~ res:", res);
-      if (res.status === 200) {
+      if (res.data?.status === 200) {
         toast.success("OTP sent successfully!");
         return onNext();
       }
     } catch (error) {
       console.log("Error sending OTP:", error);
-      return toast.error("Failed to send OTP. Please try again.");
-    } finally {
-      setIsLoading(false);
+      toast.error("Failed to send OTP. Please try again.");
     }
   };
 

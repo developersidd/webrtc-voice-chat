@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Rooms from "./pages/Rooms";
@@ -11,7 +11,7 @@ import SemiProtectedRoute from "./routes/SemiProtectedRoute";
 
 const App = () => {
   return (
-    <>
+    <Router>
       <Navbar />
       <Routes>
         {/*<Route path="/register" element={<Register />} />*/}
@@ -28,7 +28,7 @@ const App = () => {
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </>
+    </Router>
   );
 };
 

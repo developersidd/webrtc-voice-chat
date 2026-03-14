@@ -32,7 +32,6 @@ app.use((err, req, res, next) => {
   const message = err.message || "Something went wrong!";
   return res.status(status).json({
     ...err,
-    status,
     data: null,
     message,
   });
