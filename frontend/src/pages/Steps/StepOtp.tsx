@@ -1,7 +1,12 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
+import { useAppDispatch, useAppSelector } from "../../redux/app/hooks";
+import { useVerifyOTPMutation } from "../../redux/features/auth/authApi";
+import { authSelector } from "../../redux/features/auth/authSelector";
+import { setAuth } from "../../redux/features/auth/authSlice";
 
 type StepOtpProps = {
   onNext: () => void;
@@ -9,12 +14,12 @@ type StepOtpProps = {
 
 const StepOtp = ({ onNext }: StepOtpProps) => {
   const pathname = useLocation().pathname;
+  const [verifyOtp, { isLoading }] = useVerifyOTPMutation();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  console.log("🚀 ~ pathname:", pathname);
+  const { otp } = useAppSelector(authSelector);
   const isLogin = pathname?.toLowerCase() === "/login";
   const [code, setCode] = useState(["", "", "", ""]);
-  const [error, setError] = useState("");
-  console.log("🚀 ~ error:", error);
   const inputs = [
     useRef<HTMLInputElement>(null),
     useRef<HTMLInputElement>(null),
@@ -26,7 +31,6 @@ const StepOtp = ({ onNext }: StepOtpProps) => {
     e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
     i: number,
   ) => {
-    //console.log("🚀 ~ e:", e);
     const value = e.target.value;
     if (/^\d$/.test(value)) {
       const newCode = [...code];
@@ -35,9 +39,6 @@ const StepOtp = ({ onNext }: StepOtpProps) => {
       if (i < inputs.length - 1) {
         inputs[i + 1]?.current?.focus();
       }
-      if (newCode.every((c) => c !== "")) {
-        setError("");
-      }
     } else if (value === "") {
       const newCode = [...code];
       newCode[i] = "";
@@ -45,16 +46,38 @@ const StepOtp = ({ onNext }: StepOtpProps) => {
     }
   };
 
-  const handleNext = () => {
-    const isFilled = code.every((c) => c !== "");
-    console.log("🚀 ~ isFilled:", isFilled);
-    setError(isFilled ? "" : "please fill the code box!");
-    //if (error || !isFilled) return;
-    //onNext();
-    return navigate("/activate", {
-      replace: true,
-      //state: { phone: phoneData.phone, email },
-    });
+  const isFilled = code.every((c) => c !== "");
+  const handleNext = async () => {
+    if (!isFilled || !otp.email || !otp.hash){
+      return toast.error("Please enter the complete OTP.");
+    };
+    console.log("he")
+    try {
+      const res = await verifyOtp({
+        otp: code.join(""),
+        email: otp.email,
+        hash: otp.hash,
+      }).unwrap();
+      console.log("🚀 ~ res:", res);
+      if (res?.statusCode === 200) {
+        const user = res?.data?.user;
+        dispatch(setAuth(user));
+        toast.success("OTP verified successfully!");
+
+        if (user?.activated) {
+          navigate("/rooms", {
+            replace: true,
+          });
+        }
+        return navigate("/activate", {
+          replace: true,
+          state: { email: user?.email },
+        });
+      }
+    } catch (error) {
+      toast.error( error?.data?.message || "Failed to verify OTP. Please try again.");
+      console.error("Error verifying OTP:", error);
+    }
   };
   return (
     <Card className="">
@@ -81,27 +104,29 @@ const StepOtp = ({ onNext }: StepOtpProps) => {
                 value={c}
                 onChange={(e) => handleChange(e, i)}
                 className={`w-12 h-12 text-center text-lg rounded-xl bg-secondary
-                  ${
-                    error &&
-                    code[i] === "" &&
-                    `drop-shadow-red-800
-                  drop-shadow-sm`
-                  }
                   text-white focus:outline-0 focus:drop-shadow-sm focus:drop-shadow-blue focus:bg-[#454545]
                   `}
               />
             ))}
           </div>
-          {error && (
+          {/* {error && (
+                ${
+                  error &&
+                  code[i] === "" &&
+                  `drop-shadow-red-800
+                drop-shadow-sm`
+                }
             <p className="text-center text-red-500 text-sm mt-0">{error}</p>
           )}
+          */}
           <p className="text-grey text-sm mt-5 px-4 text-center">
             Didn't receive? Tap to resend
           </p>
         </div>
 
         <Button
-          className="mt-10 w-32.5 mx-auto"
+          disabled={isLoading || !isFilled}
+          className="mt-10 w-32.5 mx-auto disabled:opacity-80 disabled:cursor-not-allowed"
           label={isLogin ? "Submit" : "Next"}
           onClick={handleNext}
         />

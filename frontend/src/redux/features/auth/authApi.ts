@@ -6,7 +6,7 @@ export const authApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     sendOTP: builder.mutation({
       query: (data) => ({
-        url: AUTH("sent-otp"),
+        url: AUTH("send-otp"),
         body: data,
         method: "POST",
       }),
@@ -22,4 +22,4 @@ export const authApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useSendOTPMutation } = authApi;
+export const { useSendOTPMutation, useVerifyOTPMutation } = authApi;

@@ -1,3 +1,4 @@
+import UserDto from "../dtos/user.dto.js";
 import ApiError from "../lib/ApiError.js";
 import ApiResponse from "../lib/ApiResponse.js";
 import asyncHandler from "../lib/asyncHandler.js";
@@ -19,7 +20,7 @@ class AuthController {
     const otp = otpService.generateOTP();
     const validationDuration = 1000 * 60 * 60 * 24 * 30; // 2min
     const expires = Date.now() + validationDuration;
-    console.log("🚀 ~ expires:", expires)
+    console.log("🚀 ~ expires:", expires);
     const data = `${trimedEmail}.${otp}.${expires}`;
     const hashed = hashServices.hashOtp(data);
 
@@ -51,7 +52,7 @@ class AuthController {
     // check if user already exist
     let user = await userServices.findUser({ email });
     if (!user) {
-      await userServices.createUser({
+      user = await userServices.createUser({
         email,
       });
     }
@@ -59,16 +60,21 @@ class AuthController {
     // JWT Token
     const { accessToken, refreshToken } = await jwtServices.generateTokens({
       _id: user?._id,
-      activated: false
+      activated: false,
     });
-    const apiRes = new ApiResponse(200, "OTP Verified successfully", {accessToken});
-    return res
-      .status(apiRes.statusCode)
-      .cookie("refreshToken", refreshToken, {
-        maxAge: 864000000, // 10 days
-        httpOnly: true,
-      })
-      .json(apiRes);
+    user.refreshToken = refreshToken;
+    await user.save();
+    const userDto = new UserDto(user);
+    const apiRes = new ApiResponse(200, "OTP Verified successfully", {
+      accessToken,
+      user: userDto,
+    });
+    res.cookie("refreshToken", refreshToken, {
+      maxAge: 864000000, // 10 days
+      httpOnly: true,
+      secure: true,
+    });
+    return res.status(apiRes.statusCode).json(apiRes);
   });
 }
 

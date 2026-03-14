@@ -2,16 +2,33 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isAuthenticated: false,
-  user: null,
+  user: {
+    email: "",
+    refreshToken: "",
+    activated: false,
+    createdAt: "",
+    updatedAt: "",
+  },
+  otp: {
+    email: "siddik.prgmr@gmail.com",
+    hash: "520a312b0c8fbd225da85eb26b8341c222124783eef00230c66fb683a412fc98.1776070302815",
+  },
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setAuth: (state, action) => {},
+    setAuth: (state, action) => {
+      state.user = action.payload;
+      state.isAuthenticated = action.payload?.activated;
+
+    },
+    setOtp: (state, action) => {
+      state.otp = action.payload;
+    },
   },
 });
 
 export default authSlice.reducer;
-export const { setAuth } = authSlice.actions;
+export const { setAuth, setOtp } = authSlice.actions;
