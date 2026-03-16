@@ -1,27 +1,22 @@
+import { Pencil } from "lucide-react";
 import { useState } from "react";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
+import { useAppDispatch, useAppSelector } from "../../redux/app/hooks";
+import activateSelector from "../../redux/features/activate/activateSelector";
+import { setAvatar } from "../../redux/features/activate/activateSlice";
 
 type StepAvatarProps = {
   onNext: () => void;
 };
 
 const StepAvatar = ({ onNext }: StepAvatarProps) => {
-  const [name, setName] = useState("");
-  const [error, setError] = useState("");
-  const validateName = (name: string) => {
-    if (name.trim() === "") {
-      return "Name is required";
-    } else if (name.trim().length < 6) {
-      return "Name must be at least 6 characters";
-    }
-    return "";
-  };
-  console.log("🚀 ~ error:", error);
-
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const activateSlice = useAppSelector(activateSelector);
+  const dispatch = useAppDispatch();
+  const [imageToUpload, setImageToUpload] = useState("/avatar.png");
+  console.log("🚀 ~ imageToUpload:", imageToUpload);
   const handleNext = () => {
-    const error = validateName(name);
-    setError(error);
     if (error) return;
     onNext();
   };
@@ -32,43 +27,48 @@ const StepAvatar = ({ onNext }: StepAvatarProps) => {
           <img className="size-7.5" src={"/monkey.png"} alt={"Avatar"} />
           <h2 className="text-white  text-lg  md:text-[22px] font-bold">
             {" "}
-            Okay, Ab Siddik
+            Okay, <span className="capitalize">{activateSlice.fullName}</span>
           </h2>
         </div>
-        <div className="mx-auto text-center ">
+        <div className="mx-auto text-center relative">
           <img
-            className="size-25 border-5 border-blue rounded-full object-cover mx-auto mb-4"
-            src={"/avatar.png"}
+            className="size-27 border-5 border-blue rounded-full object-cover mx-auto"
+            src={imageToUpload}
             alt={"Ab Siddik"}
           />
-
+          {avatarFile && (
+            <h5 className="text-sm text-blue-50 mt-1.5">{avatarFile.name}</h5>
+          )}
           <input
             type="file"
             //value={name}
-            id="avatar"
-            name="avatar"
+            accept=".png,.jpg,.jpeg"
+            id="avatarFile"
+            name="avatarFile"
             onChange={(e) => {
-              const value = e.target.value;
-              setName(value);
-              //if (error) {
-              setError(validateName(value));
-              //}
+              const file = e.target.files?.[0];
+              if (file) {
+                const image = URL.createObjectURL(file);
+                setImageToUpload(image);
+                setAvatarFile(file);
+                dispatch(setAvatar(image));
+              }
             }}
-            //placeholder="Upload your avatar"
-            className={`bg-secondary text-white rounded-lg px-4 py-2 h-[40px] w-[90%] mx-auto hidden focus:outline-0  ${error ? "border border-red-500" : ""}`}
+            className={`hidden`}
           />
 
-          {/*{error && <p className="text-red-500 text-sm mt-2">{error}</p>}*/}
           <label
-            htmlFor="avatar"
-            className="cursor-pointer text-blue  mt-6 px-4 text-center w-[200px] mx-auto"
+            title="Upload avatarFile"
+            htmlFor="avatarFile"
+            className="cursor-pointer text-white absolute top-1 right-[125px] "
           >
-            Upload your avatar
+            <Pencil className="inline size-4.5" />
           </label>
         </div>
 
         <Button
-          className="mt-10 w-32.5 mx-auto"
+          disabled={!avatarFile}
+          className="mt-10 w-32.5 mx-auto disabled:opacity-80 disabled:cursor-not-allowed"
           label="Next"
           onClick={handleNext}
         />

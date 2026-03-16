@@ -21,7 +21,7 @@ class AuthController {
     const validationDuration = 1000 * 60 * 60 * 24 * 30; // 2min
     const expires = Date.now() + validationDuration;
     console.log("🚀 ~ expires:", expires);
-    const data = `${trimedEmail}.${otp}.${expires}`;
+    const data = `${trimedEmail}.${otp}.${expires}`; // Adds expires to make it more protectable, because user can generate expires and pass the expires validation check step but I can't pass the hash matching.
     const hashed = hashServices.hashOtp(data);
 
     const emailResponse = await otpService.sentOTPByEmail(otp, trimedEmail);
@@ -68,13 +68,25 @@ class AuthController {
     const apiRes = new ApiResponse(200, "OTP Verified successfully", {
       accessToken,
       user: userDto,
+      isAuth: true,
     });
+
     res.cookie("refreshToken", refreshToken, {
       maxAge: 864000000, // 10 days
       httpOnly: true,
       secure: true,
     });
+
+    res.cookie("accessToken", accessToken, {
+      maxAge: 864000000, // 10 days
+      httpOnly: true,
+      secure: true,
+    });
+
     return res.status(apiRes.statusCode).json(apiRes);
+  });
+  activate = asyncHandler(async (req, res) => {
+    
   });
 }
 

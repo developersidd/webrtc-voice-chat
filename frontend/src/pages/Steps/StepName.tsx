@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
+import { useAppDispatch } from "../../redux/app/hooks";
+import { setFullName } from "../../redux/features/activate/activateSlice";
 
 type StepNameProps = {
   onNext: () => void;
@@ -9,6 +11,7 @@ type StepNameProps = {
 const StepName = ({ onNext }: StepNameProps) => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
+  const dispatch = useAppDispatch();
   const validateName = (name: string) => {
     if (name.trim() === "") {
       return "Name is required";
@@ -23,8 +26,9 @@ const StepName = ({ onNext }: StepNameProps) => {
     const error = validateName(name);
     setError(error);
     if (error) return;
+    dispatch(setFullName(name));
     onNext();
-  }; 
+  };
   return (
     <Card className="relative pb-32">
       <div className="w-87.5 mx-auto">
@@ -57,7 +61,8 @@ const StepName = ({ onNext }: StepNameProps) => {
         </div>
 
         <Button
-          className="mt-10 w-32.5 mx-auto"
+          disabled={!name || !!error}
+          className="mt-10 w-32.5 mx-auto disabled:opacity-80 disabled:cursor-not-allowed"
           label="Next"
           onClick={handleNext}
         />

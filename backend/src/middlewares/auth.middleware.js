@@ -1,0 +1,41 @@
+import jwt from "jsonwebtoken";
+import ApiError from "../lib/ApiError";
+import asyncHandler from "../lib/asyncHandler";
+import userServices from "../services/user.services";
+
+const verifyJWT = asyncHandler(async (req, res, next) => {
+  const accessToken =
+    req.cookies?.accessToken ||
+    req.header("Authorization")?.replace("Bearer ", "");
+
+  if (!accessToken) {
+    throw new ApiError(401, "Unauthorized access!");
+  }
+
+  const decodedToken = jwt.verify(
+    accessToken,
+    process.env.JWT_ACCESS_TOKEN_SECRET,
+  );
+  const user = await userServices.findUser({ _id: decodedToken?._id });
+
+  if (!user?._id) {
+    throw new ApiError(401, "Invalid Access Token!");
+  }
+  console.log("🚀 ~ user?._doc:", user?._doc);
+  req.user = {
+    ...user?._doc,
+    accessToken,
+  };
+  next();
+});
+
+const verifyRoles =
+  (...roles) =>
+  (req, res, next) => {
+    if (!req?.user?._id || roles.includes(req?.user?.role)) {
+      return next(new ApiError(403, "Forbidden"));
+    }
+    next();
+  };
+
+export { verifyJWT, verifyRoles };

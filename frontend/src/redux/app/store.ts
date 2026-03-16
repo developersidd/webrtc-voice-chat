@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import apiSlice from "../api/apiSlice";
-import authReducer from "../features/auth/authSlice";
+import activateSlice from "../features/activate/activateSlice";
+import authSlice from "../features/auth/authSlice";
 const store = configureStore({
   reducer: {
     api: apiSlice.reducer,
-    authSlice: authReducer,
+    [authSlice.name]: authSlice.reducer,
+    [activateSlice.name]: activateSlice.reducer,
   },
   middleware: (gDM) => gDM().concat(apiSlice.middleware),
   devTools: import.meta.env.NODE_ENV !== "production",
