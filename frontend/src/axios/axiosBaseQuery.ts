@@ -3,10 +3,16 @@ import { AxiosError } from "axios";
 import axiosInstance from ".";
 const axiosBaseQuery =
   (): BaseQueryFn<any, unknown, unknown> =>
-  async ({ url, method, body, params }) => {
+  async ({ url, method, body, params, headers }) => {
     console.log("🚀 ~ url, method, data, params:", url, method, body, params);
     try {
-      const result = await axiosInstance({ url, method, data: body, params });
+      const result = await axiosInstance({
+        url,
+        method,
+        data: body,
+        params,
+        headers,
+      });
       return { data: result.data };
     } catch (axiosError) {
       const error = axiosError as AxiosError;

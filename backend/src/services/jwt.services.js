@@ -18,7 +18,12 @@ class JWTService {
       refreshToken,
     };
   }
-  async verifyAccessToken() {}
+  async verifyAccessToken(accessToken, accessTokenScret) {
+    return jwt.verify(
+        accessToken,
+        accessTokenScret
+      );
+  }
 }
 
 export default new JWTService();

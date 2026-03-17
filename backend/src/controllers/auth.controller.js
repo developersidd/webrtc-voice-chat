@@ -1,12 +1,14 @@
+import { Jimp } from "jimp";
+import path from "path";
 import UserDto from "../dtos/user.dto.js";
 import ApiError from "../lib/ApiError.js";
 import ApiResponse from "../lib/ApiResponse.js";
 import asyncHandler from "../lib/asyncHandler.js";
+import { getDirName } from "../lib/utils.js";
 import hashServices from "../services/hash.services.js";
 import jwtServices from "../services/jwt.services.js";
 import otpService from "../services/otp.services.js";
 import userServices from "../services/user.services.js";
-
 class AuthController {
   sendOTP = asyncHandler(async (req, res) => {
     const { email = "" } = req.body || {};
@@ -26,10 +28,14 @@ class AuthController {
 
     const emailResponse = await otpService.sentOTPByEmail(otp, trimedEmail);
     console.log("🚀 ~ emailResponse:", emailResponse);
-    const apiRes = new ApiResponse(200, "OTP sent successfully", {
-      email: trimedEmail,
-      hash: `${hashed}.${expires}`,
-    });
+    const apiRes = new ApiResponse(
+      200,
+      {
+        email: trimedEmail,
+        hash: `${hashed}.${expires}`,
+      },
+      "OTP sent successfully",
+    );
 
     return res.status(apiRes.statusCode).json(apiRes);
   });
@@ -65,11 +71,15 @@ class AuthController {
     user.refreshToken = refreshToken;
     await user.save();
     const userDto = new UserDto(user);
-    const apiRes = new ApiResponse(200, "OTP Verified successfully", {
-      accessToken,
-      user: userDto,
-      isAuth: true,
-    });
+    const apiRes = new ApiResponse(
+      200,
+      {
+        accessToken,
+        user: userDto,
+        isAuth: true,
+      },
+      "OTP Verified successfully",
+    );
 
     res.cookie("refreshToken", refreshToken, {
       maxAge: 864000000, // 10 days
@@ -86,7 +96,42 @@ class AuthController {
     return res.status(apiRes.statusCode).json(apiRes);
   });
   activate = asyncHandler(async (req, res) => {
-    
+    const { avatar = "", name = "" } = req.body || {};
+
+    if (!avatar?.trim() || !name?.trim()) {
+      throw new ApiError(400, "Avatar & Name fields are required!");
+    }
+
+    const avatarPath = `/storage/avatars/${name?.split(" ")?.at(-1)?.toLowerCase()}-${Date.now()}.png`;
+    console.log("🚀 ~ avatarPath:", avatarPath);
+    const buffer = Buffer.from(avatar?.split(",")[1], "base64");
+    const jimpRes = await Jimp.read(buffer);
+    //console.log("🚀 ~ jimpRes:", jimpRes)
+    jimpRes
+      .resize({
+        h: Jimp.AUTO,
+        w: 150,
+      })
+      .write(path.resolve(getDirName(import.meta.url), `..${avatarPath}`));
+
+    const userId = req?.user?._id;
+    console.log("🚀 ~ userId:", userId);
+    const user = await userServices.findUser({ _id: userId });
+
+    if (!user?._id) {
+      throw new ApiError(404, "User not found!");
+    }
+    user.fullName = name;
+    user.avatar = avatarPath;
+    user.activated = true;
+    await user.save();
+    console.log("🚀 ~ user:", user);
+    const response = new ApiResponse(
+      200,
+      { user: new UserDto(user) },
+      "Account Activated successfully",
+    );
+    return res.status(response.statusCode).json(response);
   });
 }
 

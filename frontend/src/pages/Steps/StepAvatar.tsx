@@ -1,24 +1,57 @@
-import { Pencil } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import { useAppDispatch, useAppSelector } from "../../redux/app/hooks";
+import { useActivateMutation } from "../../redux/features/activate/activateApi";
 import activateSelector from "../../redux/features/activate/activateSelector";
 import { setAvatar } from "../../redux/features/activate/activateSlice";
+import { useNavigate } from "react-router-dom";
+import { setAuth } from "../../redux/features/auth/authSlice";
+//
+//type StepAvatarProps = {
+//  onNext: () => void;
+//};
 
-type StepAvatarProps = {
-  onNext: () => void;
-};
-
-const StepAvatar = ({ onNext }: StepAvatarProps) => {
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+const StepAvatar = () => {
+  const [activate, { isLoading }] = useActivateMutation();
   const activateSlice = useAppSelector(activateSelector);
   const dispatch = useAppDispatch();
-  const [imageToUpload, setImageToUpload] = useState("/avatar.png");
-  console.log("🚀 ~ imageToUpload:", imageToUpload);
-  const handleNext = () => {
-    if (error) return;
-    onNext();
+  const navigate = useNavigate();
+  const [image, setImage] = useState("/avatar.png");
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImage(reader.result as string);
+        dispatch(setAvatar(reader.result as string));
+      };
+      // Start reading the file as a data URL
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleNext = async () => {
+    try {
+      if (!image) return;
+      const result = await activate({
+        avatar: image,
+        name: activateSlice.fullName,
+      }).unwrap();
+      if (result?.statusCode === 200) {
+        toast.success("Your account has been activated successfully!");
+        dispatch(setAuth(result?.data?.user));
+        return navigate("/room");
+      }
+      console.log("🚀 ~ result:", result);
+    } catch (error) {
+      toast.error(
+        "An error occurred while activating your account. Please try again.",
+      );
+      console.error("Error occurred while activating:", error);
+    }
+    //onNext();
   };
   return (
     <Card className="relative pb-32">
@@ -32,43 +65,32 @@ const StepAvatar = ({ onNext }: StepAvatarProps) => {
         </div>
         <div className="mx-auto text-center relative">
           <img
-            className="size-27 border-5 border-blue rounded-full object-cover mx-auto"
-            src={imageToUpload}
+            className="size-27 border-5 border-blue rounded-full object-cover mx-auto mb-5"
+            src={image}
             alt={"Ab Siddik"}
           />
-          {avatarFile && (
-            <h5 className="text-sm text-blue-50 mt-1.5">{avatarFile.name}</h5>
-          )}
           <input
             type="file"
-            //value={name}
             accept=".png,.jpg,.jpeg"
-            id="avatarFile"
-            name="avatarFile"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                const image = URL.createObjectURL(file);
-                setImageToUpload(image);
-                setAvatarFile(file);
-                dispatch(setAvatar(image));
-              }
-            }}
+            id="avatar"
+            name="avatar"
+            onChange={handleFileChange}
             className={`hidden`}
           />
 
           <label
-            title="Upload avatarFile"
-            htmlFor="avatarFile"
-            className="cursor-pointer text-white absolute top-1 right-[125px] "
+            title="Upload avatar"
+            htmlFor="avatar"
+            className="cursor-pointer text-blue"
           >
-            <Pencil className="inline size-4.5" />
+            Choose a different avatar
           </label>
         </div>
 
         <Button
-          disabled={!avatarFile}
-          className="mt-10 w-32.5 mx-auto disabled:opacity-80 disabled:cursor-not-allowed"
+          isLoading={isLoading}
+          disabled={!image || isLoading}
+          className="mt-9 w-32.5 mx-auto disabled:opacity-80 disabled:cursor-not-allowed"
           label="Next"
           onClick={handleNext}
         />

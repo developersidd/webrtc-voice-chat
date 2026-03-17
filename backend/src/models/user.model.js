@@ -14,6 +14,10 @@ const UserSchema = new Schema(
       type: String,
       //required: [true, "Username is required"],
     },
+    fullName: {
+      type: String,
+      //required: [true, "Username is required"],
+    },
     bio: {
       type: String,
     },
