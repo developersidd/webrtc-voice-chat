@@ -15,8 +15,8 @@ app.use(
   }),
 );
 app.use("/storage",express.static(path.resolve("src", "storage")));
-console.log("🚀 ~ :", import.meta.url)
-console.log(`🚀 ~ path ):`, path.resolve("storage"))
+//console.log("🚀 ~ :", import.meta.url)
+//console.log(`🚀 ~ path ):`, path.resolve("storage"))
 app.use(express.json({ limit: "8mb" }));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));

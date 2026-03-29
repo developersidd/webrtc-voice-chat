@@ -6,7 +6,7 @@ const ProtectedRoute = () => {
   const { user, isAuthenticated } = useAppSelector(authSelector);
 
   const location = useLocation();
-  if (isAuthenticated && !user.activated) {
+  if (isAuthenticated && !user?.activated) {
     return <Navigate to={"/activate"} state={{ from: location }} replace />;
   }
   return !isAuthenticated ? (

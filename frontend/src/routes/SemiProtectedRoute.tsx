@@ -9,7 +9,7 @@ const SemiProtectedRoute = () => {
   if (!isAuthenticated) {
     return <Navigate to={"/"} state={{ from: location }} replace />;
   }
-  return user._id && !user.activated ? (
+  return user?._id && !user?.activated ? (
     <Outlet />
   ) : (
     <Navigate to={"/room"} state={{ from: location }} replace />

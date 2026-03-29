@@ -41,7 +41,7 @@ const StepAvatar = () => {
       }).unwrap();
       if (result?.statusCode === 200) {
         toast.success("Your account has been activated successfully!");
-        dispatch(setAuth(result?.data?.user));
+        dispatch(setAuth(result?.data));
         return navigate("/room");
       }
       console.log("🚀 ~ result:", result);
@@ -88,9 +88,9 @@ const StepAvatar = () => {
         </div>
 
         <Button
-          isLoading={isLoading}
+          //isLoading={isLoading}
           disabled={!image || isLoading}
-          className="mt-9 w-32.5 mx-auto disabled:opacity-80 disabled:cursor-not-allowed"
+          className="mt-9 w-32.5 mx-auto"
           label="Next"
           onClick={handleNext}
         />

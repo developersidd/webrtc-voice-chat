@@ -1,3 +1,4 @@
+import type { ResponseType, UserType } from "../../../types";
 import apiSlice from "../../api/apiSlice";
 import { setAuth } from "./authSlice";
 
@@ -16,7 +17,7 @@ export const authApi = apiSlice.injectEndpoints({
 
       verifyOTP: builder.mutation({
         query: (data) => {
-          console.log("🚀 ~ data:", data);
+          //console.log("🚀 ~ data:", data);
           return {
             url: AUTH("verify-otp"),
             body: data,
@@ -24,15 +25,18 @@ export const authApi = apiSlice.injectEndpoints({
           };
         },
       }),
-      
-      logout: builder.mutation({
+
+      logout: builder.mutation<
+        ResponseType<{ user: null; isAuth: false }>,
+        void
+      >({
         query: () => ({
           url: AUTH("logout"),
           method: "POST",
         }),
       }),
 
-      refreshAccessToken: builder.query({
+      refreshAccessToken: builder.query<ResponseType<{user: UserType}>, void>({
         query: () => ({
           url: AUTH("refresh"),
           method: "GET",
@@ -40,8 +44,7 @@ export const authApi = apiSlice.injectEndpoints({
         async onQueryStarted(arg, { queryFulfilled, dispatch }) {
           try {
             const { data } = await queryFulfilled;
-            console.log("🚀 ~ datasssss:", data);
-            dispatch(setAuth(data?.data?.user));
+            dispatch(setAuth(data?.data));
           } catch (error) {
             console.log("Error while refreshing Access Token!", error);
           }

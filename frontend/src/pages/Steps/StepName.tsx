@@ -62,7 +62,7 @@ const StepName = ({ onNext }: StepNameProps) => {
 
         <Button
           disabled={!name || !!error}
-          className="mt-10 w-32.5 mx-auto disabled:opacity-80 disabled:cursor-not-allowed"
+          className="mt-10 w-32.5 mx-auto"
           label="Next"
           onClick={handleNext}
         />

@@ -26,12 +26,12 @@ const Button = ({
   return (
     <button
       disabled={disabled || isLoading}
-      className={cn`bg-blue hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-full cursor-pointer flex items-center justify-center
+      className={cn`bg-blue hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-full cursor-pointer flex items-center justify-center disabled:opacity-80 disabled:cursor-not-allowed
         ${className || ""}`}
       onClick={onClick}
     >
       {isLoading ? (
-        <Loader color="#fff" />
+        <Loader className="" />
       ) : href ? (
         <Link to={href} className="flex items-center">
           <span>{label}</span>

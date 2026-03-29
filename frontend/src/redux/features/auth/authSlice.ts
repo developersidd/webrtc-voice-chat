@@ -1,12 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
+import type { AuthStateType } from "../../../types";
 
-const initialState = {
+const initialState: AuthStateType = {
   isAuthenticated: false,
   user: {
     email: "",
     refreshToken: "",
     activated: false,
+    avatar: "",
     createdAt: "",
+    username: "",
+    bio: "",
+    fullName: "",
     _id: "",
   },
   otp: {
@@ -22,9 +27,11 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setAuth: (state, action) => {
-      state.user = action.payload;
-      state.isAuthenticated = true;
+      const { user } = action.payload || {};
+      state.user = user;
+      state.isAuthenticated = user === null ? false : true;
     },
+
     setOtp: (state, action) => {
       state.otp = action.payload;
     },

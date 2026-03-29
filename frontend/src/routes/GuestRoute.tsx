@@ -6,7 +6,7 @@ const GuestRoute = () => {
   const { user } = useAppSelector(authSelector);
 
   const location = useLocation();
-  if (user._id) {
+  if (user?._id) {
     return <Navigate to={"/room"} state={{ from: location }} replace />;
   }
   return <Outlet />;

@@ -1,8 +1,11 @@
 import React from 'react'
+import ActivationLoader from '../components/ui/CardLoader'
 
 const Rooms = () => {
   return (
-    <div>Rooms</div>
+    <div>
+      <ActivationLoader  />
+    </div>
   )
 }
 

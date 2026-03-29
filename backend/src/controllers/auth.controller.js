@@ -142,7 +142,9 @@ class AuthController {
     }
 
     // check if user valid
-    const userData = await jwtServices.verifyRefreshToken(refreshTokenFromCookie);
+    const userData = await jwtServices.verifyRefreshToken(
+      refreshTokenFromCookie,
+    );
 
     const user = await userServices.findUser({
       _id: userData?._id,
@@ -179,6 +181,25 @@ class AuthController {
       httpOnly: true,
       secure: true,
     });
+
+    return res.status(apiRes.statusCode).json(apiRes);
+  });
+  logout = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    const user = await userServices.findUser({ _id: userId });
+    user.refreshToken = "";
+    await user.save();
+    const apiRes = new ApiResponse(
+      200,
+      {
+        user: null,
+        isAuth: false,
+      },
+      "Logged out successfully",
+    );
+
+    res.clearCookie("refreshToken");
+    res.clearCookie("accessToken");
 
     return res.status(apiRes.statusCode).json(apiRes);
   });

@@ -64,7 +64,7 @@ const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
 
   // handle next button click
   const handleNext = async () => {
-        return onNext();
+    return onNext();
 
     if (!isValid) return;
     //  sent otp to email
@@ -86,7 +86,9 @@ const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
       }
     } catch (error) {
       console.log("Error sending OTP:", error);
-      toast.error(error?.data?.message || "Failed to send OTP. Please try again.");
+      toast.error(
+        error?.data?.message || "Failed to send OTP. Please try again.",
+      );
     }
   };
 
@@ -163,7 +165,7 @@ const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
           <Button
             //isLoading={isLoading}
             disabled={!isValid || isLoading}
-            className="mt-10 w-32.5 mx-auto disabled:opacity-80 disabled:cursor-not-allowed"
+            className="mt-10 w-32.5 mx-auto "
             label="Next"
             onClick={handleNext}
           />

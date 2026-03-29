@@ -8,7 +8,6 @@ import { useVerifyOTPMutation } from "../../redux/features/auth/authApi";
 import { authSelector } from "../../redux/features/auth/authSelector";
 import { setAuth } from "../../redux/features/auth/authSlice";
 
-
 const StepOtp = () => {
   const pathname = useLocation().pathname;
   const [verifyOtp, { isLoading }] = useVerifyOTPMutation();
@@ -56,14 +55,13 @@ const StepOtp = () => {
       }).unwrap();
       console.log("🚀 ~ res:", res);
       if (res?.statusCode === 200) {
-        const user = res?.data?.user;
-        dispatch(setAuth(user));
+        dispatch(setAuth(res?.data));
         toast.success("OTP verified successfully!");
       }
     } catch (error) {
-      toast.error(
-        error?.data?.message || "Failed to verify OTP. Please try again.",
-      );
+      const errMsg =
+        error?.data?.message || "Failed to verify OTP. Please try again.";
+      toast.error(errMsg);
       console.error("Error verifying OTP:", error);
     }
   };
@@ -114,7 +112,7 @@ const StepOtp = () => {
 
         <Button
           disabled={isLoading || !isFilled}
-          className="mt-10 w-32.5 mx-auto disabled:opacity-80 disabled:cursor-not-allowed"
+          className="mt-10 w-32.5 mx-auto "
           label={isLogin ? "Submit" : "Next"}
           onClick={handleNext}
         />

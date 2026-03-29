@@ -1,6 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Loader from "./components/ui/Loader";
+import CardLoader from "./components/ui/CardLoader";
 import Home from "./pages/Home";
 import Rooms from "./pages/Rooms";
 import Activate from "./pages/activate/Activate";
@@ -12,17 +12,12 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import SemiProtectedRoute from "./routes/SemiProtectedRoute";
 
 const App = () => {
-  const { isLoading, isSuccess, isError, data } = useRefreshAccessTokenQuery(
-    {},
-    {
-      //skip: true,
-    },
-  );
+  const { isLoading, isSuccess, isError, data } = useRefreshAccessTokenQuery();
   console.log("🚀 ~ data:", data);
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader className="size-16" />
+      <div className="h-screen flex items-center justify-center">
+        <CardLoader className="mt-0" text="Loading, please wait..." />
       </div>
     );
   }
