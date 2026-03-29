@@ -1,8 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Button from "./ui/Button";
-import logo from "/logo.png";
 import Card from "./ui/Card";
-import { Link } from "react-router-dom";
+import logo from "/logo.png";
 const WelcomeCard = () => {
   return (
     <Card>
@@ -25,6 +24,7 @@ const WelcomeCard = () => {
           sure nothing breaks :)
         </p>
         <Button
+          //isLoading={true}
           href="/authenticate"
           icon={<ArrowRight size={19} />}
           label="Let's go"

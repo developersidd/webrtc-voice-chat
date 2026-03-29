@@ -74,7 +74,6 @@ class AuthController {
     const apiRes = new ApiResponse(
       200,
       {
-        accessToken,
         user: userDto,
         isAuth: true,
       },
@@ -113,6 +112,7 @@ class AuthController {
         w: 150,
       })
       .write(path.resolve(getDirName(import.meta.url), `..${avatarPath}`));
+    console.log("🚀 ~path ", getDirName(import.meta.url), `..${avatarPath}`);
 
     const userId = req?.user?._id;
     console.log("🚀 ~ userId:", userId);
@@ -132,6 +132,55 @@ class AuthController {
       "Account Activated successfully",
     );
     return res.status(response.statusCode).json(response);
+  });
+
+  refreshAccessToken = asyncHandler(async (req, res) => {
+    const refreshTokenFromCookie = req.cookies?.refreshToken;
+
+    if (!refreshTokenFromCookie) {
+      throw new ApiError(401, "Unauthorized access!");
+    }
+
+    // check if user valid
+    const userData = await jwtServices.verifyRefreshToken(refreshTokenFromCookie);
+
+    const user = await userServices.findUser({
+      _id: userData?._id,
+      refreshToken: refreshTokenFromCookie,
+    });
+
+    if (!user?._id) {
+      throw new ApiError(401, "Unauthorized access!");
+    }
+    // generrate tokens
+    const { accessToken, refreshToken } = await jwtServices.generateTokens({
+      _id: user?._id,
+    });
+    user.refreshToken = refreshToken;
+    await user.save();
+    const userDto = new UserDto(user);
+    const apiRes = new ApiResponse(
+      200,
+      {
+        user: userDto,
+        isAuth: true,
+      },
+      "Access Token refreshed successfully!",
+    );
+
+    res.cookie("refreshToken", refreshToken, {
+      maxAge: 864000000, // 10 days
+      httpOnly: true,
+      secure: true,
+    });
+
+    res.cookie("accessToken", accessToken, {
+      maxAge: 864000000, // 10 days
+      httpOnly: true,
+      secure: true,
+    });
+
+    return res.status(apiRes.statusCode).json(apiRes);
   });
 }
 

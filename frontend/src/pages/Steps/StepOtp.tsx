@@ -48,7 +48,6 @@ const StepOtp = () => {
     if (!isFilled || !otp.email || !otp.hash) {
       return toast.error("Please enter the complete OTP.");
     }
-    //console.log("he");
     try {
       const res = await verifyOtp({
         otp: code.join(""),
@@ -60,16 +59,6 @@ const StepOtp = () => {
         const user = res?.data?.user;
         dispatch(setAuth(user));
         toast.success("OTP verified successfully!");
-
-        //if (user?.activated) {
-        //  navigate("/rooms", {
-        //    replace: true,
-        //  });
-        //}
-        //return navigate("/activate", {
-        //  replace: true,
-        //  state: { email: user?.email },
-        //});
       }
     } catch (error) {
       toast.error(

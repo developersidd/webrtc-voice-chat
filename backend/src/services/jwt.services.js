@@ -1,4 +1,6 @@
 import jwt from "jsonwebtoken";
+const accessTokenScret = process.env.JWT_ACCESS_TOKEN_SECRET;
+const refreshTokenScret = process.env.JWT_REFRESH_TOKEN_SECRET;
 
 class JWTService {
   async generateTokens(payload) {
@@ -18,11 +20,12 @@ class JWTService {
       refreshToken,
     };
   }
-  async verifyAccessToken(accessToken, accessTokenScret) {
-    return jwt.verify(
-        accessToken,
-        accessTokenScret
-      );
+  async verifyAccessToken(accessToken) {
+    return jwt.verify(accessToken, accessTokenScret);
+  }
+
+  async verifyRefreshToken(refreshToken) {
+    return jwt.verify(refreshToken, refreshTokenScret);
   }
 }
 

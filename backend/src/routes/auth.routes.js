@@ -7,5 +7,6 @@ const router = Router();
 router.post("/send-otp", authController.sendOTP);
 router.post("/verify-otp", authController.verifyOtp);
 router.post("/activate", verifyJWT, authController.activate);
+router.get("/refresh", authController.refreshAccessToken);
 
 export default router;

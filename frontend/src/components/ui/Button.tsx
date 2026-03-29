@@ -31,7 +31,7 @@ const Button = ({
       onClick={onClick}
     >
       {isLoading ? (
-        <Loader />
+        <Loader color="#fff" />
       ) : href ? (
         <Link to={href} className="flex items-center">
           <span>{label}</span>
