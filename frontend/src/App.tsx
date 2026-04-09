@@ -10,9 +10,14 @@ import { useRefreshAccessTokenQuery } from "./redux/features/auth/authApi";
 import GuestRoute from "./routes/GuestRoute";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import SemiProtectedRoute from "./routes/SemiProtectedRoute";
-
 const App = () => {
-  const { isLoading, isSuccess, isError, data } = useRefreshAccessTokenQuery();
+  const isLoggedIn = localStorage.getItem("loggedIn") as string;
+  const { isLoading, isSuccess, isError, data } = useRefreshAccessTokenQuery(
+    undefined,
+    {
+      skip: !JSON.parse(isLoggedIn),
+    },
+  );
   console.log("🚀 ~ data:", data);
   if (isLoading) {
     return (

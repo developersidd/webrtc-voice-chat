@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
+import CardLoader from "../../components/ui/CardLoader";
 import { useAppDispatch, useAppSelector } from "../../redux/app/hooks";
 import { useActivateMutation } from "../../redux/features/activate/activateApi";
 import activateSelector from "../../redux/features/activate/activateSelector";
 import { setAvatar } from "../../redux/features/activate/activateSlice";
-import { useNavigate } from "react-router-dom";
 import { setAuth } from "../../redux/features/auth/authSlice";
 //
 //type StepAvatarProps = {
@@ -19,6 +20,8 @@ const StepAvatar = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [image, setImage] = useState("/avatar.png");
+  const [unmounted, setUnmounted] = useState(false);
+  // Handle file input change
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -31,7 +34,7 @@ const StepAvatar = () => {
       reader.readAsDataURL(file);
     }
   };
-
+  // Handle next button click
   const handleNext = async () => {
     try {
       if (!image) return;
@@ -41,8 +44,10 @@ const StepAvatar = () => {
       }).unwrap();
       if (result?.statusCode === 200) {
         toast.success("Your account has been activated successfully!");
+        //if (!unmounted) {
         dispatch(setAuth(result?.data));
         return navigate("/room");
+        //}
       }
       console.log("🚀 ~ result:", result);
     } catch (error) {
@@ -53,6 +58,16 @@ const StepAvatar = () => {
     }
     //onNext();
   };
+
+  // unsubscribe from the store when the component unmounts
+  useEffect(() => {
+    return () => {
+      setUnmounted(true);
+    };
+  }, []);
+
+  // activation loader
+  if (isLoading) return <CardLoader />;
   return (
     <Card className="relative pb-32">
       <div className="w-87.5 mx-auto">

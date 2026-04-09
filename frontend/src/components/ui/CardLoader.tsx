@@ -15,6 +15,8 @@ const CardLoader = ({ text, className }: CardLoaderProps) => {
       </p>
     </Card>
   );
+
+  
 };
 
 export default CardLoader;

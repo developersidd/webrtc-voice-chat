@@ -56,6 +56,7 @@ const StepOtp = () => {
       console.log("🚀 ~ res:", res);
       if (res?.statusCode === 200) {
         dispatch(setAuth(res?.data));
+        localStorage.setItem("loggedIn", "true");
         toast.success("OTP verified successfully!");
       }
     } catch (error) {

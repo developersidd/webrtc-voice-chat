@@ -6,6 +6,7 @@ import { authSelector } from "../redux/features/auth/authSelector";
 import { setAuth } from "../redux/features/auth/authSlice";
 import Button from "./ui/Button";
 import logo from "/logo.png";
+import { Link } from "react-router-dom";
 const Navbar = () => {
   const { user } = useAppSelector(authSelector);
   const [logoutUser, { isLoading, error, data }] = useLogoutMutation();
@@ -21,8 +22,8 @@ const Navbar = () => {
   };
 
   return (
-    <header className="bg-primary container mx-auto px-4 py-10 flex items-center justify-between">
-      <div className="flex items-center">
+    <header className="bg-primary container mx-auto py-5 px-4 sm:px-2 flex items-center justify-between "> 
+      <div className="flex items-center ">
         <img
           className="w-7 h-6.5 lg:w-[37.65px] lg:h-7.5 mr-2 lg:mr-3"
           src={logo}
@@ -35,7 +36,9 @@ const Navbar = () => {
       {user?._id && (
         <div className="flex gap-4 items-center justify-center">
           <h3 className="text-white"> {user.fullName} </h3>
+          <Link to="/">
           <img className="size-13 rounded-full border-[3px] border-blue" src={user.avatar} alt={user.fullName} />
+          </Link>
           <Button
           className="hidden sm:flex"
             disabled={isLoading}

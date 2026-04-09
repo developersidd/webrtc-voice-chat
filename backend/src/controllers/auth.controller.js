@@ -103,6 +103,7 @@ class AuthController {
 
     const avatarPath = `/storage/avatars/${name?.split(" ")?.at(-1)?.toLowerCase()}-${Date.now()}.png`;
     console.log("🚀 ~ avatarPath:", avatarPath);
+    // Resize and save avatar to storage
     const buffer = Buffer.from(avatar?.split(",")[1], "base64");
     const jimpRes = await Jimp.read(buffer);
     //console.log("🚀 ~ jimpRes:", jimpRes)
