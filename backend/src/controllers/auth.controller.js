@@ -137,6 +137,7 @@ class AuthController {
 
   refreshAccessToken = asyncHandler(async (req, res) => {
     const refreshTokenFromCookie = req.cookies?.refreshToken;
+    console.log("🚀 ~ refreshTokenFromCookie:", refreshTokenFromCookie);
 
     if (!refreshTokenFromCookie) {
       throw new ApiError(401, "Unauthorized access!");
@@ -146,19 +147,23 @@ class AuthController {
     const userData = await jwtServices.verifyRefreshToken(
       refreshTokenFromCookie,
     );
+    //console.log("🚀 ~ userData:", userData);
 
     const user = await userServices.findUser({
       _id: userData?._id,
       refreshToken: refreshTokenFromCookie,
     });
+    console.log("🚀 ~ user:", user);
 
     if (!user?._id) {
+      console.log("MAtc");
       throw new ApiError(401, "Unauthorized access!");
     }
     // generrate tokens
     const { accessToken, refreshToken } = await jwtServices.generateTokens({
       _id: user?._id,
     });
+    //console.log("🚀 ~new accessToken:", accessToken);
     user.refreshToken = refreshToken;
     await user.save();
     const userDto = new UserDto(user);

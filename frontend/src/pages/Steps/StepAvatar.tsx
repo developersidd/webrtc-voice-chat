@@ -46,7 +46,7 @@ const StepAvatar = () => {
         toast.success("Your account has been activated successfully!");
         //if (!unmounted) {
         dispatch(setAuth(result?.data));
-        return navigate("/room");
+        return navigate("/rooms");
         //}
       }
       console.log("🚀 ~ result:", result);

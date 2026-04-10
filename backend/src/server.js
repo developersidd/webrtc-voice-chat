@@ -5,7 +5,6 @@ import path from "path";
 import connectDB from "./db/index.js";
 import ApiError from "./lib/ApiError.js";
 import "./lib/env.js";
-import { getDirName } from "./lib/utils.js";
 import AuthRouter from "./routes/auth.routes.js";
 const app = express();
 app.use(
@@ -14,7 +13,7 @@ app.use(
     origin: [process.env.CORS_ORIGIN],
   }),
 );
-app.use("/storage",express.static(path.resolve("src", "storage")));
+app.use("/storage", express.static(path.resolve("src", "storage")));
 //console.log("🚀 ~ :", import.meta.url)
 //console.log(`🚀 ~ path ):`, path.resolve("storage"))
 app.use(express.json({ limit: "8mb" }));
@@ -55,5 +54,5 @@ connectDB()
     });
   })
   .catch((err) => {
-    console.log("MONGODB connection failed!!", err);
+    console.log("🚀🚀 MONGODB connection failed!!", err);
   });

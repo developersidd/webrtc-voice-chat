@@ -5,7 +5,7 @@ import { useLogoutMutation } from "../redux/features/auth/authApi";
 import { authSelector } from "../redux/features/auth/authSelector";
 import { setAuth } from "../redux/features/auth/authSlice";
 import Button from "./ui/Button";
-import logo from "/logo.png";
+import logo from "/assets/logo.png";
 import { Link } from "react-router-dom";
 const Navbar = () => {
   const { user } = useAppSelector(authSelector);

@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Button from "./ui/Button";
 import Card from "./ui/Card";
-import logo from "/logo.png";
+import logo from "/assets/logo.png";
 const WelcomeCard = () => {
   return (
     <Card>

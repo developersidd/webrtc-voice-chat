@@ -41,14 +41,14 @@ const RoomCard = ({ room }: { room: Room }) => {
               <h4 className="text-[15px]">{speaker.name}</h4>
               <img
                 className="size-4"
-                src="/icons/message-icon.png"
+                src="/assets/icons/message-icon.png"
                 alt="Verified"
               />
             </div>
           ))}
         </div>
       </div>
-      <div className="flex items-center gap-1 mt-5 text-sm text-grey justify-end absolute right-3 bottom-3">
+      <div className="flex items-center gap-1 mt-5 text-sm text-grey justify-end absolute right-4 bottom-2">
         <span className="font-bold text-[17px]">{room.totalPeople}</span>{" "}
         <User className="size-4.5 fill-grey" />
       </div>
