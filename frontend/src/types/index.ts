@@ -1,10 +1,10 @@
-type ResponseType<T> = {
+type Response<T> = {
   statusCode: number;
   message: string;
   data: T;
 };
 
-type UserType = {
+type User = {
   email: string;
   refreshToken: string;
   activated: boolean;
@@ -13,16 +13,28 @@ type UserType = {
   username: string;
   bio: string;
   fullName: string;
-  _id: string;
+  id: string;
 };
 
-type AuthStateType = {
+type AuthState = {
   isAuthenticated: boolean;
-  user: UserType | null;
+  user: User | null;
   otp: {
     email: string;
     hash: string;
   };
 };
 
-export type { AuthStateType, ResponseType, UserType };
+type RoomType = "open" | "social" | "private";
+
+type Room = {
+  id: string;
+  topic: string;
+  roomType: RoomType;
+  speakers: User[];
+  listeners: User[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type { AuthState, Response, Room, RoomType, User };

@@ -1,10 +1,10 @@
-import WelcomeCard from "../components/WelcomeCard";
+import WelcomeCard from "./_components/WelcomeCard";
 
 const Home = () => {
   return (
-    <div>
+    <>
       <WelcomeCard />
-    </div>
+    </>
   );
 };
 

@@ -1,9 +1,12 @@
 import { Podcast, Search } from "lucide-react";
-import CreateRoomModal from "../components/CreateRoomModal";
-import RoomCard from "../components/RoomCard";
-import Button from "../components/ui/Button";
+
 import { Fragment } from "react/jsx-runtime";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import CreateRoomModal from "../../components/CreateRoomModal";
+import Button from "../../components/ui/Button";
+import RoomCard from "./_components/RoomCard";
+import { useCreateRoomMutation } from "../../redux/features/room/roomApi";
 
 const rooms = [
   {
@@ -110,9 +113,10 @@ const Rooms = () => {
           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between">
             <div className="flex flex-col sm:flex-row items-baseline gap-4">
               <div className="-top-2.5 relative">
-                <h3 className="text-white text-lg">All voice rooms</h3>
-                <div className="w-3/5 mt-1 h-[3px] bg-blue" />
+                  <h3 className="text-white text-lg">All voice rooms</h3>
+                  <div className="w-3/5 mt-1 h-[3px] bg-blue" />
               </div>
+
               <div
                 className="
             bg-secondary rounded-full px-4 py-2 flex items-center gap-3 sm:mt-4 w-full sm:w-[300px]

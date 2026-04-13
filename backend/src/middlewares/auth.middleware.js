@@ -14,9 +14,7 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
   }
   let decodedToken;
   try {
-    decodedToken = await jwtServices.verifyAccessToken(
-      accessToken,
-    );
+    decodedToken = await jwtServices.verifyAccessToken(accessToken);
   } catch (error) {
     throw new ApiError(401, "Unauthorized access!");
   }

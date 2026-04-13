@@ -1,5 +1,6 @@
 import { cn } from "@sglara/cn";
 import { User } from "lucide-react";
+import { Link } from "react-router-dom";
 
 type Room = {
   id: number;
@@ -15,7 +16,9 @@ type Room = {
 const RoomCard = ({ room }: { room: Room }) => {
   return (
     <div className="bg-secondary rounded-3xl p-5 text-white relative">
-      <h3 className="text-lg leading-6 mb-5">{room.topic}</h3>
+      <Link to={`/room/${room.id}`}>
+        <h3 className="text-lg leading-6 mb-5">{room.topic}</h3>
+      </Link>
       <div className="flex items-start gap-5 pb-2 relative">
         <div className="pr-10">
           {room.speakers.map((speaker, ind) => {

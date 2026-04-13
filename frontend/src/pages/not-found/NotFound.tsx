@@ -11,7 +11,7 @@ const NotFound = () => {
           The page you are looking for does not exist. Please check the URL and
           try again.
         </h1>
-        <Button label="Back to Home" href="/" />
+        <Button label="Back to Home" href="/rooms" />
       </div>
     </div>
   );

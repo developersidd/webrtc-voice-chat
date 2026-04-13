@@ -1,5 +1,5 @@
 class UserDto {
-  _id;
+  id;
   email;
   createdAt;
   refreshToken;
@@ -7,7 +7,7 @@ class UserDto {
   avatar;
   fullName;
   constructor(user) {
-    this._id = user._id;
+    this.id = user._id;
     this.email = user.email;
     this.fullName = user.fullName;
     this.createdAt = user.createdAt;

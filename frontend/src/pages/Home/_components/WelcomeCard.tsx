@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
-import Button from "./ui/Button";
-import Card from "./ui/Card";
+import Button from "../../../components/ui/Button";
+import Card from "../../../components/ui/Card";
 import logo from "/assets/logo.png";
 const WelcomeCard = () => {
   return (

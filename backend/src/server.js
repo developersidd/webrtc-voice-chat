@@ -6,6 +6,7 @@ import connectDB from "./db/index.js";
 import ApiError from "./lib/ApiError.js";
 import "./lib/env.js";
 import AuthRouter from "./routes/auth.routes.js";
+import RoomRouter from "./routes/room.routes.js";
 const app = express();
 app.use(
   cors({
@@ -25,6 +26,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", AuthRouter);
+app.use("/api/v1/rooms", RoomRouter);
 
 // 404 error handler
 app.use((req, res, next) => {

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { AuthStateType } from "../../../types";
+import type { AuthState } from "../../../types";
 
-const initialState: AuthStateType = {
+const initialState: AuthState = {
   isAuthenticated: false,
   user: {
     email: "",
@@ -12,7 +12,7 @@ const initialState: AuthStateType = {
     username: "",
     bio: "",
     fullName: "",
-    _id: "",
+    id: "",
   },
   otp: {
     email: "absidd.prgmr@gmail.com",

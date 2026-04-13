@@ -12,12 +12,14 @@ type ButtonProps = {
   onClick?: () => void;
   icon?: React.ReactNode;
   className?: string;
+  loaderClassName?: string;
 };
 
 const Button = ({
   label,
   href,
   onClick,
+  loaderClassName,
   isLoading = false,
   disabled = false,
   icon = <ArrowRight size={19} />,
@@ -31,7 +33,7 @@ const Button = ({
       onClick={onClick}
     >
       {isLoading ? (
-        <Loader className="" />
+        <Loader className={loaderClassName || ""} />
       ) : href ? (
         <Link to={href} className="flex items-center gap-2">
           <span>{label}</span>

@@ -1,4 +1,4 @@
-import type { ResponseType, UserType } from "../../../types";
+import type { Response, User } from "../../../types";
 import apiSlice from "../../api/apiSlice";
 import { setAuth } from "./authSlice";
 
@@ -26,17 +26,14 @@ export const authApi = apiSlice.injectEndpoints({
         },
       }),
 
-      logout: builder.mutation<
-        ResponseType<{ user: null; isAuth: false }>,
-        void
-      >({
+      logout: builder.mutation<Response<{ user: null; isAuth: false }>, void>({
         query: () => ({
           url: AUTH("logout"),
           method: "POST",
         }),
       }),
 
-      refreshAccessToken: builder.query<ResponseType<{user: UserType}>, void>({
+      refreshAccessToken: builder.query<Response<{ user: User }>, void>({
         query: () => ({
           url: AUTH("refresh"),
           method: "GET",
