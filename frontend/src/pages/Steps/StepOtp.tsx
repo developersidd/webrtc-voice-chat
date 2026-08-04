@@ -72,7 +72,7 @@ const StepOtp = () => {
         <div className="flex justify-center items-start  mb-7 md:mb-9 ">
           <img
             className="w-[22.85px] h-[28px]"
-            src={"/lock-emoji.png"}
+            src={"/assets/lock-emoji.png"}
             alt={"otp"}
           />
           <h2 className="text-white text-lg  md:text-[22px] md:leading-7.5 font-bold text-center w-[60%] md:w-[75%]">

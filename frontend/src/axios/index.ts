@@ -9,6 +9,7 @@ const axiosInstance = axios.create({
   },
 });
 
+console.log("🚀 ~ import.meta.env.VITE_API_URL:", import.meta.env.VITE_API_URL)
 //axiosInstance.interceptors.request.use((config) => {
 //
 //  return config;

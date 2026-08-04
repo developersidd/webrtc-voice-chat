@@ -6,7 +6,7 @@ import Authenticate from "./pages/authenticate/Authenticate";
 import Home from "./pages/Home/HomePage";
 import NotFound from "./pages/not-found/NotFound";
 import Rooms from "./pages/Rooms/RoomsPage";
-import SingleRoom from "./pages/SingleRoom/SingleRoomPage";
+import SingleRoom from "./pages/Room/RoomPage";
 import { useRefreshAccessTokenQuery } from "./redux/features/auth/authApi";
 import GuestRoute from "./routes/GuestRoute";
 import ProtectedRoute from "./routes/ProtectedRoute";

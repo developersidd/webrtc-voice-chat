@@ -15,10 +15,9 @@ const initialState: AuthState = {
     id: "",
   },
   otp: {
-    email: "absidd.prgmr@gmail.com",
-    hash: "d38eefdb730a8c5156a64a18bfac6b613a0f286907fc0ab837344fd1fa0295e8.1777274409703",
-    //email: "siddik.prgmr@gmail.com",
-    //hash: "520a312b0c8fbd225da85eb26b8341c222124783eef00230c66fb683a412fc98.1776070302815",
+    //email: "absidd.prgmr@gmail.com",
+    hash: "9d021de7b89cbea46458efc00bf4ac1e5de6cf207313c4383146e2a9dfa8c139.1788202874087",
+    email: "siddik.prgmr@gmail.com",
   },
 };
 

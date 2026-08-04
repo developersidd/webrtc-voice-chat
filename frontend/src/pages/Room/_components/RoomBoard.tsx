@@ -1,6 +1,10 @@
 import { useState } from "react";
-import RoomSpeakers from "./RoomSpeakers";
+import { useParams } from "react-router-dom";
+import useWebRTC from "../../../hooks/useWebRTC";
+import { useAppSelector } from "../../../redux/app/hooks";
+import { authSelector } from "../../../redux/features/auth/authSelector";
 import RoomListeners from "./RoomListeners";
+import RoomSpeakers from "./RoomSpeakers";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export interface User {
@@ -64,7 +68,10 @@ const LISTENERS: User[] = [
 
 const RoomBoard = () => {
   const [isRaised, setIsRaised] = useState(false);
+  const { roomId } = useParams();
+  const { user } = useAppSelector(authSelector);
   const [hasLeft, setHasLeft] = useState(false);
+  const { clients, provideAudioRef } = useWebRTC(roomId, user);
   return (
     <main className="container mx-auto px-4 sm:px-1 py-8 space-y-8 fade-up">
       {/* Room header card */}
@@ -126,8 +133,13 @@ const RoomBoard = () => {
         {/* Divider */}
         <div className="h-px bg-input mb-8" />
 
+        {/*<ListenerSpeakerWrapper provideAudioRef={provideAudioRef} speakers={SPEAKERS} listeners={LISTENERS} />
+         */}
+
+        <div className="h-px bg-input mb-8" />
+
         {/* Speakers section */}
-        <RoomSpeakers speakers={SPEAKERS} />
+        <RoomSpeakers provideAudioRef={provideAudioRef} speakers={clients} />
 
         {/* Divider */}
         <div className="h-px bg-input mb-8" />

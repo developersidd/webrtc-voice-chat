@@ -1,6 +1,12 @@
 import SoundWave from "../../../components/ui/SoundWave";
+import type { User } from "./RoomBoard";
 
-const SpeakerCard = ({ user }: { user: User }) => (
+type SpeakerCardProps = {
+  user: User;
+  provideAudioRef: (id: string, node: HTMLAudioElement | null) => void;
+};
+
+const SpeakerCard = ({ user, provideAudioRef }: SpeakerCardProps) => (
   <div className="flex flex-col items-center gap-2 group cursor-pointer">
     <div className="relative">
       {user.isSpeaking && (
@@ -20,6 +26,13 @@ const SpeakerCard = ({ user }: { user: User }) => (
           className="w-20 h-20 rounded-full object-cover block"
         />
       </div>
+
+      <audio
+        className="hidden"
+        ref={(instance) => provideAudioRef(user.id.toString(), instance)}
+        autoPlay
+        //playsInline
+      />
 
       {/* Muted badge */}
       {user.isMuted && (
