@@ -7,10 +7,10 @@ import App from "./App.tsx";
 import "./index.css";
 import store from "./redux/app/store.ts";
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+  //<StrictMode>
     <Provider store={store}>
       <App />
       <Toaster richColors />
     </Provider>
-  </StrictMode>,
+  //</StrictMode>,
 );

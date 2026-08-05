@@ -48,7 +48,7 @@ const SpeakerCard = ({ user, provideAudioRef }: SpeakerCardProps) => (
     </div>
 
     <span className="text-sm font-medium text-slate-200 tracking-wide">
-      {user.name}
+      {user.name ?? user?.fullName}
     </span>
   </div>
 );

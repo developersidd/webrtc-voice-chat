@@ -1,13 +1,24 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
+import http from "http";
 import path from "path";
+import { Server } from "socket.io";
 import connectDB from "./db/index.js";
 import ApiError from "./lib/ApiError.js";
 import "./lib/env.js";
 import AuthRouter from "./routes/auth.routes.js";
 import RoomRouter from "./routes/room.routes.js";
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: [process.env.CORS_ORIGIN],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
 app.use(
   cors({
     credentials: true,
@@ -27,6 +38,11 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/auth", AuthRouter);
 app.use("/api/v1/rooms", RoomRouter);
+
+// Socket.io connection
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+});
 
 // 404 error handler
 app.use((req, res, next) => {
@@ -48,10 +64,10 @@ app.use((err, req, res, next) => {
 connectDB()
   .then(() => {
     const PORT = process.env.PORT || 5000;
-    app.on("error", () => {
+    server.on("error", () => {
       console.log("Application isn't ready to run yes!!");
     });
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server is listening on http://localhost:${PORT}`);
     });
   })
