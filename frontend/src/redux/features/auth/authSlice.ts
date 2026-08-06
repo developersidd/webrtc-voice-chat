@@ -15,9 +15,8 @@ const initialState: AuthState = {
     id: "",
   },
   otp: {
-    //email: "absidd.prgmr@gmail.com",
-    hash: "9d021de7b89cbea46458efc00bf4ac1e5de6cf207313c4383146e2a9dfa8c139.1788202874087",
-    email: "siddik.prgmr@gmail.com",
+    hash: import.meta.env.VITE_HASH,
+    email: import.meta.env.VITE_EMAIL,
   },
 };
 
