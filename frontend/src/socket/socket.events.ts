@@ -1,5 +1,8 @@
+
 export const SOCKET_EVENTS = {
   JOIN: "JOIN",
-  JOINED: "JOINED",
   LEAVE: "LEAVE",
+  ADD_PEER: "ADD_PEER",
+  REMOVE_PEER: "REMOVE_PEER",
+  RELAY_ICE: "RELAY_ICE",
 };

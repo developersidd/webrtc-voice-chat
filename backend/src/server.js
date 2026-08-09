@@ -39,9 +39,43 @@ app.get("/", (req, res) => {
 app.use("/api/v1/auth", AuthRouter);
 app.use("/api/v1/rooms", RoomRouter);
 
+// socket user maping
+const socketUserMap = {};
+
 // Socket.io connection
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
+
+  io.on(SOCKET_EVENTS.JOIN, ({ roomId, user }) => {
+    console.log("User joined room:", { roomId, user });
+    socketUserMap[socket.id] = user;
+
+    // get clients from the room
+    const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || []);
+    console.log("Clients in room:", clients);
+
+    // add the clients to the room
+    clients.forEach((clientId) => {
+      // send a message to the client to add the peer
+      io.to(clientId).emit(SOCKET_EVENTS.ADD_PEER, {
+        peerId: socket.id, // peer id of the new user
+        createOffer: false, // 
+        user,
+      });
+      
+      // send a message to the new user to add the existing peer
+      socket.emit(SOCKET_EVENTS.ADD_PEER, {
+        peerId: clientId, // peer id of the existing user
+        createOffer: true, // 
+        user: socketUserMap[clientId], // user info of the existing user
+      }); 
+    });
+    socket.join(roomId);  // join the room
+  });
+
+
+
+
 });
 
 // 404 error handler

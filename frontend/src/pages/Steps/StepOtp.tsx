@@ -44,12 +44,14 @@ const StepOtp = () => {
 
   const isFilled = code.every((c) => c !== "");
   const handleNext = async () => {
-    if (!isFilled || !otp.email || !otp.hash) {
-      return toast.error("Please enter the complete OTP.");
-    }
+    //if (!isFilled || !otp.email || !otp.hash) {
+    //  return toast.error("Please enter the complete OTP.");
+    //}
+    //
     try {
       const res = await verifyOtp({
-        otp: code.join(""),
+        //otp: code.join(""),
+        otp: import.meta.env.VITE_OTP,
         email: otp.email,
         hash: otp.hash,
       }).unwrap();
@@ -94,7 +96,7 @@ const StepOtp = () => {
                   text-white focus:outline-0 focus:drop-shadow-sm focus:drop-shadow-blue focus:bg-[#454545]
                   `}
               />
-            ))}
+            ))} 
           </div>
           {/* {error && (
                 ${
@@ -112,7 +114,7 @@ const StepOtp = () => {
         </div>
 
         <Button
-          disabled={isLoading || !isFilled}
+          //disabled={isLoading || !isFilled}
           className="mt-10 w-32.5 mx-auto "
           label={isLogin ? "Submit" : "Next"}
           onClick={handleNext}
