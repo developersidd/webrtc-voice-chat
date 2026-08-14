@@ -114,10 +114,28 @@ const useWebRTC = (roomId: string, user: User) => {
         });
       };
 
-      
+      // Add local track to remote connections
+      localMediaStream.current?.getAudioTracks().forEach((track) => {
+        connections.current[peerId].addTrack(track, localMediaStream.current!);
+      });
+      // create offer
+      if (createOffer) {
+        const offer = await connections.current[peerId].createOffer();
+        //await connections.current[peerId].setLocalDescription(offer);
+        //
+        // send offer to the server
+        socketRef.current?.emit(SOCKET_EVENTS.RELAY_SDP, {
+          sessionDescription: offer,
+          peerId,
+        });
+      }
     };
 
     socketRef.current?.on(SOCKET_EVENTS.ADD_PEER, handleNewPeer);
+
+    return () => {
+      socketRef.current?.off(SOCKET_EVENTS.ADD_PEER);
+    };
   }, []);
 
   // provide auth elements
