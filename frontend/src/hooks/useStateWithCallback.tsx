@@ -6,8 +6,10 @@ const useStateWithCallback = (initialState: any) => {
   const cbRef = useRef<(state: any) => void | null>(null);
 
   const setStateWithCallback = useCallback(
-    (newState: any, callback: (state: any) => void) => {
-      cbRef.current = callback;
+    (newState: any, callback?: (state: any) => void) => {
+      if (callback) {
+        cbRef.current = callback;
+      }
       setState((prevState: any) => {
         return typeof newState === "function" ? newState(prevState) : newState;
       });

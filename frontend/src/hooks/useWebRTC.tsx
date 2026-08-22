@@ -138,6 +138,66 @@ const useWebRTC = (roomId: string, user: User) => {
     };
   }, []);
 
+  // Handle ice candidate
+  useEffect(() => {
+    socketRef.current?.on(
+      SOCKET_EVENTS.ICE_CANDIDATE,
+      ({ peerId, icecandidate }) => {
+        if (icecandidate) {
+          connections.current[peerId].addIceCandidate(icecandidate); // this is the ice candidate from the other peer
+        }
+      },
+    );
+    return () => {
+      socketRef.current?.off(SOCKET_EVENTS.ICE_CANDIDATE);
+    };
+  }, []);
+
+  // Handle session description
+  useEffect(() => {
+    const handleRemoteSdp = async ({
+      peerId,
+      sessionDescription: remoteDescription,
+    }: {
+      peerId: string;
+      sessionDescription: RTCSessionDescriptionInit;
+    }) => {
+      connections.current[peerId].setRemoteDescription(
+        new RTCSessionDescription(remoteDescription),
+      );
+    };
+
+    socketRef.current?.on(SOCKET_EVENTS.SESSION_DESCRIPTION, handleRemoteSdp);
+    return () => {
+      socketRef.current?.off(
+        SOCKET_EVENTS.SESSION_DESCRIPTION,
+        handleRemoteSdp,
+      );
+    };
+  }, []);
+
+  // Handle remove peer
+  useEffect(() => {
+    const handleRemovePeer = ({
+      peerId,
+      userId,
+    }: {
+      peerId: string;
+      userId: string;
+    }) => {
+      if (connections.current[peerId]) {
+        connections.current[peerId].close();
+        delete connections.current[peerId];
+        delete audioElements.current[peerId];
+        setClients((list: User[]) => list.filter((c) => c.id !== userId));
+      }
+    };
+    socketRef.current?.on(SOCKET_EVENTS.REMOVE_PEER, handleRemovePeer);
+    return () => {
+      socketRef.current?.off(SOCKET_EVENTS.REMOVE_PEER, handleRemovePeer);
+    };
+  }, []);
+
   // provide auth elements
   const provideAudioRef = (id: string, node: HTMLAudioElement | null) => {
     audioElements.current[id] = node;

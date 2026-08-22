@@ -4,6 +4,7 @@ import express from "express";
 import http from "http";
 import path from "path";
 import { Server } from "socket.io";
+import { SOCKET_EVENTS } from "../socket/socket.events.js";
 import connectDB from "./db/index.js";
 import ApiError from "./lib/ApiError.js";
 import "./lib/env.js";
@@ -59,23 +60,35 @@ io.on("connection", (socket) => {
       // send a message to the client to add the peer
       io.to(clientId).emit(SOCKET_EVENTS.ADD_PEER, {
         peerId: socket.id, // peer id of the new user
-        createOffer: false, // 
+        createOffer: false, //
         user,
       });
-      
+
       // send a message to the new user to add the existing peer
       socket.emit(SOCKET_EVENTS.ADD_PEER, {
         peerId: clientId, // peer id of the existing user
-        createOffer: true, // 
+        createOffer: true, //
         user: socketUserMap[clientId], // user info of the existing user
-      }); 
+      });
     });
-    socket.join(roomId);  // join the room
+    socket.join(roomId); // join the room
   });
 
+  // Handle Relay Ice
+  socket.on(SOCKET_EVENTS.RELAY_ICE, ({ peerId, icecandidate }) => {
+    io.to(peerId).emit(SOCKET_EVENTS.ICE_CANDIDATE, {
+      peerId: socket.id,
+      icecandidate,
+    });
+  });
 
-
-
+  // Handle Relay SDP (Session Description Protocol)
+  socket.on(SOCKET_EVENTS.RELAY_SDP, ({ peerId, sessionDescription }) => {
+    io.to(peerId).emit(SOCKET_EVENTS.SESSION_DESCRIPTION, {
+      peerId: socket.id,
+      sessionDescription,
+    });
+  });
 });
 
 // 404 error handler
