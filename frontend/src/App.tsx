@@ -45,7 +45,7 @@ const App = () => {
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/rooms" element={<Rooms />} />
-          <Route path="/room/:id" element={<SingleRoom />} />
+          <Route path="/room/:roomId" element={<SingleRoom />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

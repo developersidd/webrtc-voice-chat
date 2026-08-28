@@ -5,14 +5,14 @@ import socketInit from "../socket";
 import { SOCKET_EVENTS } from "../socket/socket.events";
 import type { User } from "../types";
 import useStateWithCallback from "./useStateWithCallback";
-const users = [
-  { id: 5, name: "Waheed", avatar: "https://i.pravatar.cc/150?img=11" },
-  { id: 6, name: "Ivan", avatar: "https://i.pravatar.cc/150?img=14" },
-  { id: 7, name: "Adriana", avatar: "https://i.pravatar.cc/150?img=2" },
-];
+//const users = [
+//  { id: 5, name: "Waheed", avatar: "https://i.pravatar.cc/150?img=11" },
+//  { id: 6, name: "Ivan", avatar: "https://i.pravatar.cc/150?img=14" },
+//  { id: 7, name: "Adriana", avatar: "https://i.pravatar.cc/150?img=2" },
+//];
 
 const useWebRTC = (roomId: string, user: User) => {
-  const [clients, setClients] = useStateWithCallback(users);
+  const [clients, setClients] = useStateWithCallback([]);
   const audioElements = useRef<{ [key: string]: HTMLAudioElement | null }>({});
   const connections = useRef<{ [key: string]: RTCPeerConnection }>({});
   const localMediaStream = useRef<MediaStream | null>(null);
@@ -20,14 +20,18 @@ const useWebRTC = (roomId: string, user: User) => {
 
   // initialize the socket connection
   useEffect(() => {
+    console.log("initis socket");
     socketRef.current = socketInit();
   }, []);
   // add new client wrapper
   const addNewClient = (newClient: User, cb?: () => void) => {
+    console.log("🚀 ~ newClient:", newClient);
     const lookingFor = clients.find(
       (client: User) => client.id === newClient.id,
     );
+    console.log("🚀 ~ lookingFor:", lookingFor);
     if (lookingFor === undefined) {
+      console.log("Adding new");
       setClients(
         (existingClients: User[]) => [...existingClients, newClient],
         cb,
@@ -55,13 +59,20 @@ const useWebRTC = (roomId: string, user: User) => {
           localElement.srcObject = localMediaStream.current;
 
           // socket emit room join event
-          socketRef.current?.emit("JOIN", {
+          socketRef.current?.emit(SOCKET_EVENTS.JOIN, {
             roomId,
             user,
           });
         }
       });
     });
+
+    return () => {
+      // Leaving the room and cleaning up connections when the component unmounts
+      localMediaStream.current?.getTracks().forEach((track) => track.stop());
+
+      socketRef.current?.emit(SOCKET_EVENTS.LEAVE);
+    };
   }, []);
 
   // handle peer connection
@@ -75,6 +86,7 @@ const useWebRTC = (roomId: string, user: User) => {
       createOffer: boolean;
       user: User;
     }) => {
+      console.log("🚀 ~ user:", user);
       // check if we already connected to this user
       if (peerId in connections.current) {
         console.warn(
@@ -85,6 +97,7 @@ const useWebRTC = (roomId: string, user: User) => {
       connections.current[peerId] = new RTCPeerConnection({
         iceServers: freeice(),
       });
+      console.log(`adding new `);
       // Handle new ice candidate
       connections.current[peerId].onicecandidate = (e) => {
         socketRef.current?.emit(SOCKET_EVENTS.RELAY_ICE, {
@@ -121,8 +134,9 @@ const useWebRTC = (roomId: string, user: User) => {
       // create offer
       if (createOffer) {
         const offer = await connections.current[peerId].createOffer();
-        //await connections.current[peerId].setLocalDescription(offer);
+        await connections.current[peerId].setLocalDescription(offer);
         //
+        console.log("sending offer to the server");
         // send offer to the server
         socketRef.current?.emit(SOCKET_EVENTS.RELAY_SDP, {
           sessionDescription: offer,
@@ -165,6 +179,17 @@ const useWebRTC = (roomId: string, user: User) => {
       connections.current[peerId].setRemoteDescription(
         new RTCSessionDescription(remoteDescription),
       );
+      // if session description is type of offer then create an answer
+      if (remoteDescription.type === "offer") {
+        const connection = connections.current[peerId];
+        const answer = await connection.createAnswer();
+
+        connection.setLocalDescription(answer);
+        socketRef.current?.emit(SOCKET_EVENTS.RELAY_SDP, {
+          peerId,
+          sessionDescription: answer,
+        });
+      }
     };
 
     socketRef.current?.on(SOCKET_EVENTS.SESSION_DESCRIPTION, handleRemoteSdp);

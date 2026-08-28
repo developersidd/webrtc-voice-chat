@@ -47,7 +47,7 @@ const socketUserMap = {};
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
-  io.on(SOCKET_EVENTS.JOIN, ({ roomId, user }) => {
+  socket.on(SOCKET_EVENTS.JOIN, ({ roomId, user }) => {
     console.log("User joined room:", { roomId, user });
     socketUserMap[socket.id] = user;
 
@@ -57,6 +57,7 @@ io.on("connection", (socket) => {
 
     // add the clients to the room
     clients.forEach((clientId) => {
+      console.log("sending msg")
       // send a message to the client to add the peer
       io.to(clientId).emit(SOCKET_EVENTS.ADD_PEER, {
         peerId: socket.id, // peer id of the new user
@@ -89,6 +90,35 @@ io.on("connection", (socket) => {
       sessionDescription,
     });
   });
+
+  const leaveRoom = () => {
+    const { rooms } = socket;
+    Array.from(rooms).forEach((roomId) => {
+      const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || []);
+      // Saying clients to remove the peer
+      clients.forEach((clientId) => {
+        // send a message to the client to remove the peer
+        io.to(clientId).emit(SOCKET_EVENTS.REMOVE_PEER, {
+          peerId: socket.id,
+          userId: socketUserMap[socket.id]?.id,
+        });
+        // send a message to the leaving user to remove the existing peer
+        socket.emit(SOCKET_EVENTS.REMOVE_PEER, {
+          peerId: clientId,
+          userId: socketUserMap[clientId]?.id,
+        });
+      });
+      // remove the user from the room
+      socket.leave(roomId);
+    });
+
+    // remove the user from the socketUserMap
+    delete socketUserMap[socket.id];
+  };
+
+  // Leaving the room
+  socket.on(SOCKET_EVENTS.LEAVE, leaveRoom);
+  socket.on("disconnect", leaveRoom)
 });
 
 // 404 error handler

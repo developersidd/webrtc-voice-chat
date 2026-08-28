@@ -70,9 +70,11 @@ const LISTENERS: User[] = [
 const RoomBoard = () => {
   const [isRaised, setIsRaised] = useState(false);
   const { roomId } = useParams();
+  console.log("🚀 ~ roomId:", roomId)
   const { user } = useAppSelector(authSelector);
   const [hasLeft, setHasLeft] = useState(false);
-  const { clients, provideAudioRef } = useWebRTC(roomId, user);
+  const { clients, provideAudioRef } = useWebRTC(roomId as string, user);
+  console.log("🚀 ~ clients:", clients)
   return (
     <main className="container mx-auto px-4 sm:px-1 py-8 space-y-8 fade-up">
       {/* Room header card */}

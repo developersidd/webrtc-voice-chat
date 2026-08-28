@@ -96,7 +96,7 @@ const StepOtp = () => {
                   text-white focus:outline-0 focus:drop-shadow-sm focus:drop-shadow-blue focus:bg-[#454545]
                   `}
               />
-            ))} 
+            ))}
           </div>
           {/* {error && (
                 ${
