@@ -1,111 +1,23 @@
 import { Podcast, Search } from "lucide-react";
 
-import { Fragment } from "react/jsx-runtime";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import CreateRoomModal from "../../components/CreateRoomModal";
 import Button from "../../components/ui/Button";
+import { useRoomsQuery } from "../../redux/features/room/roomApi";
 import RoomCard from "./_components/RoomCard";
-import { useCreateRoomMutation } from "../../redux/features/room/roomApi";
-
-const rooms = [
-  {
-    id: 1,
-    topic: "Which framework best for frontend ?",
-    speakers: [
-      {
-        id: 1,
-        name: "John Doe",
-        avatar: "/images/monkey-avatar.png",
-      },
-      {
-        id: 2,
-        name: "Jane Doe",
-        avatar: "/images/monkey-avatar.png",
-      },
-      {
-        id: 2,
-        name: "Jane Doe",
-        avatar: "/images/monkey-avatar.png",
-      },
-    ],
-    totalPeople: 40,
-  },
-  {
-    id: 2,
-    topic: "What’s new in machine learning?",
-    speakers: [
-      {
-        id: 1,
-        name: "John Doe",
-        avatar: "/images/monkey-avatar.png",
-      },
-      {
-        id: 2,
-        name: "Jane Doe",
-        avatar: "/images/monkey-avatar.png",
-      },
-    ],
-    totalPeople: 40,
-  },
-  {
-    id: 3,
-    topic: "Why people use stack overflow?",
-    speakers: [
-      {
-        id: 1,
-        name: "John Doe",
-        avatar: "/images/monkey-avatar.png",
-      },
-      {
-        id: 2,
-        name: "Jane Doe",
-        avatar: "/images/monkey-avatar.png",
-      },
-    ],
-    totalPeople: 40,
-  },
-  {
-    id: 4,
-    topic: "Artificial inteligence is the future?",
-    speakers: [
-      {
-        id: 1,
-        name: "John Doe",
-        avatar: "/images/monkey-avatar.png",
-      },
-      {
-        id: 2,
-        name: "Jane Doe",
-        avatar: "/images/monkey-avatar.png",
-      },
-    ],
-    totalPeople: 40,
-  },
-  {
-    id: 5,
-    topic: "Artificial inteligence is the future?",
-    speakers: [
-      {
-        id: 1,
-        name: "John Doe",
-        avatar: "/images/monkey-avatar.png",
-      },
-      {
-        id: 2,
-        name: "Jane Doe",
-        avatar: "/images/monkey-avatar.png",
-      },
-    ],
-    totalPeople: 40,
-  },
-];
+import type { Room } from "../../types";
 
 const Rooms = () => {
+  const { isFetching, data } = useRoomsQuery({});
+  console.log("🚀 ~ data:", data);
+  const rooms: Room[] = data?.data?.rooms || [];
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
   return (
     <>
-      <CreateRoomModal open={showCreateRoomModal} onClose={() => setShowCreateRoomModal(false)} />
+      <CreateRoomModal
+        open={showCreateRoomModal}
+        onClose={() => setShowCreateRoomModal(false)}
+      />
 
       <section className="border-t border-secondary">
         <div className="container mx-auto pt-8 pb-16 px-4 sm:px-2">
@@ -113,8 +25,8 @@ const Rooms = () => {
           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between">
             <div className="flex flex-col sm:flex-row items-baseline gap-4">
               <div className="-top-2.5 relative">
-                  <h3 className="text-white text-lg">All voice rooms</h3>
-                  <div className="w-3/5 mt-1 h-[3px] bg-blue" />
+                <h3 className="text-white text-lg">All voice rooms</h3>
+                <div className="w-3/5 mt-1 h-[3px] bg-blue" />
               </div>
 
               <div
@@ -131,22 +43,20 @@ const Rooms = () => {
               </div>
             </div>
             <div>
-
-            <Button
-            onClick={() => setShowCreateRoomModal(true)}
-            label="Create new room"
-            className="mt-5 sm:mt-4 bg-green-500 hover:bg-green-600 max-sm:w-full flex-row-reverse gap-1.5"
-            icon={<Podcast />}
-            />
+              <Button
+                onClick={() => setShowCreateRoomModal(true)}
+                label="Create new room"
+                className="mt-5 sm:mt-4 bg-green-500 hover:bg-green-600 max-sm:w-full flex-row-reverse gap-1.5"
+                icon={<Podcast />}
+              />
             </div>
           </div>
           {/*  Room List */}
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {rooms.map((room) => (
+            {rooms.map((room: Room) => (
               <RoomCard key={room.id} room={room} />
             ))}
           </div>
-          
         </div>
       </section>
     </>

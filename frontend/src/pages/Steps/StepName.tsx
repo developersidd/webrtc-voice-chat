@@ -33,8 +33,8 @@ const StepName = ({ onNext }: StepNameProps) => {
     <Card className="relative pb-32">
       <div className="w-87.5 mx-auto">
         <div className="flex justify-center items-center gap-4 mb-7 md:mb-9">
-          <img className="size-7.5" src={"/face-emoji.png"} alt={"name"} />
-          <h2 className="text-white  text-lg  md:text-[22px] font-bold">
+          <img className="size-7.5" src={"/assets/face-emoji.png"} alt={"name"} />
+          <h2 className="text-white  text-lg  md:text-[22px] font-bold">absidd.prgmr@gmail.com
             {" "}
             What's your full name?
           </h2>

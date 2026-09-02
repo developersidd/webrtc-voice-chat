@@ -50,8 +50,8 @@ const StepOtp = () => {
     //
     try {
       const res = await verifyOtp({
-        //otp: code.join(""),
-        otp: import.meta.env.VITE_OTP,
+        otp: code.join("") || import.meta.env.VITE_OTP,
+        //otp: import.meta.env.VITE_OTP,
         email: otp.email,
         hash: otp.hash,
       }).unwrap();

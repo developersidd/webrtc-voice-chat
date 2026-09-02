@@ -64,9 +64,11 @@ const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
 
   // handle next button click
   const handleNext = async () => {
-    return onNext();
+    if (!email) {
+      return onNext();
+    }
 
-    if (!isValid) return;
+    if (email && !isValid) return;
     //  sent otp to email
     try {
       const res = await sendOTP({
@@ -110,7 +112,9 @@ const StepPhoneEmail = ({ onNext }: StepPhoneEmailProps) => {
           <div className="flex justify-center items-center gap-4 mb-7 md:mb-9">
             <img
               className="size-7.5"
-              src={tab.name === "phone" ? "/assets/phone.png" : "/assets/mail.png"}
+              src={
+                tab.name === "phone" ? "/assets/phone.png" : "/assets/mail.png"
+              }
               alt={tab.name}
             />
             <h2 className="text-white  text-lg  md:text-[22px] font-bold">

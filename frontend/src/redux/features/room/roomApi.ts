@@ -14,9 +14,15 @@ const roomApi = apiSlice.injectEndpoints({
         url: "/rooms",
         method: "GET",
       })
+    }),
+    room: builder.query({
+      query: (roomId) => ({
+        url: `/rooms/${roomId}`,
+        method: "GET",
+      })
     })
   }),
 });
 
 export default roomApi;
-export const { useCreateRoomMutation, useRoomsQuery } = roomApi;
+export const { useCreateRoomMutation, useRoomsQuery, useRoomQuery } = roomApi;

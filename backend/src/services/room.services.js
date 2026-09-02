@@ -10,7 +10,29 @@ class RoomService {
       speakers: [ownerId],
     });
 
-    return room
+    return room;
+  };
+  getRooms = async () => {
+    const rooms = await Room.find()
+      .populate({
+        path: "listeners",
+        select: "username email avatar fullName",
+      })
+      .populate({
+        path: "speakers",
+        select: "username email avatar fullName",
+      });
+    return rooms;
+  };
+  getRoomById = async (roomId) => {
+    const room = await Room.findById(roomId).populate({
+      path: "speakers",
+      select: "username email avatar fullName",
+    }).populate({
+      path: "listeners",
+      select: "username email avatar fullName",
+    });
+    return room;
   };
 }
 

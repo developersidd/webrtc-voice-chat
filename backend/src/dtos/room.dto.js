@@ -1,3 +1,4 @@
+import UserDto from "./user.dto.js";
 class RoomDto {
   id;
   topic;
@@ -10,8 +11,8 @@ class RoomDto {
     this.topic = room.topic;
     this.roomType = room.roomType;
     this.ownerId = room.ownerId;
-    this.speakers = room.speakers || [];
-    this.listeners = room.listeners || [];
+    this.speakers = room.speakers.map((speaker) => new UserDto(speaker)) || [];
+    this.listeners = room.listeners.map((listener) => new UserDto(listener)) || [];
   }
 }
 

@@ -118,7 +118,7 @@ io.on("connection", (socket) => {
 
   // Leaving the room
   socket.on(SOCKET_EVENTS.LEAVE, leaveRoom);
-  socket.on("disconnect", leaveRoom)
+  socket.on("disconnecting", leaveRoom)
 });
 
 // 404 error handler

@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import useWebRTC from "../../../hooks/useWebRTC";
 import { useAppSelector } from "../../../redux/app/hooks";
 import { authSelector } from "../../../redux/features/auth/authSelector";
+import { useRoomQuery } from "../../../redux/features/room/roomApi";
+import type { Room } from "../../../types";
 import RoomListeners from "./RoomListeners";
 import RoomSpeakers from "./RoomSpeakers";
 
@@ -70,11 +72,14 @@ const LISTENERS: User[] = [
 const RoomBoard = () => {
   const [isRaised, setIsRaised] = useState(false);
   const { roomId } = useParams();
-  console.log("🚀 ~ roomId:", roomId)
   const { user } = useAppSelector(authSelector);
   const [hasLeft, setHasLeft] = useState(false);
+  const { isFetching, data } = useRoomQuery(roomId as string, {
+    skip: !roomId,
+  });
+  const room: Room | undefined = data?.data?.room;
   const { clients, provideAudioRef } = useWebRTC(roomId as string, user);
-  console.log("🚀 ~ clients:", clients)
+  console.log("🚀 ~ clients:", clients);
   return (
     <main className="container mx-auto px-4 sm:px-1 py-8 space-y-8 fade-up">
       {/* Room header card */}
@@ -89,10 +94,10 @@ const RoomBoard = () => {
               </span>
             </div>
             <h1 className="text-xl sm:text-2xl font-semibold text-white leading-snug max-w-md">
-              Artificial intelligence is the future?
+              {room?.topic}
             </h1>
             <p className="text-slate-500 text-sm">
-              {SPEAKERS.length} speakers · {LISTENERS.length} listening
+              {room?.speakers.length} speakers · {room?.listeners.length} listening
             </p>
           </div>
 
@@ -134,7 +139,6 @@ const RoomBoard = () => {
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-input mb-8" />
 
         {/*<ListenerSpeakerWrapper provideAudioRef={provideAudioRef} speakers={SPEAKERS} listeners={LISTENERS} />
          */}
